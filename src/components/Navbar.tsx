@@ -1,20 +1,21 @@
 "use client";
-
 import Link from "next/link";
-import { ShoppingCart, Search, X } from "lucide-react";
+import { ShoppingCart, Search, X, User } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ShopDropdown from "./shopbtnInNav";
 import CartSidebar from "./CartSidebar"; // 👈 import
 import { useCart } from "@/context/CartContext"; // 👈 cart count ke liye
+import {UserButton, SignOutButton, SignInButton, useUser} from "@clerk/nextjs";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false); // mobile menu
   const [cartOpen, setCartOpen] = useState(false); // cart sidebar
+  const user = useUser()
   const { cart } = useCart();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
+  // console.log(user)
   return (
     <nav className="w-full border-b border-gray-200 bg-white shadow-sm relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +40,7 @@ export default function Navbar() {
           <div className="text-5xl font-bold text-black">Hevina&apos;s</div>
 
           {/* Right side: Cart */}
-          <div>
+          <div className="flex items-center justify-center gap-5">
             <button
               onClick={() => setCartOpen(true)} // 👈 open sidebar
               className="relative"
@@ -49,6 +50,12 @@ export default function Navbar() {
                 {cartCount}
               </span>
             </button>
+            <div>
+              <UserButton/>
+            </div>
+              <div className="bg-zinc-700 rounded-md text-white px-3 py-1 hover:bg-blue-800 transition">
+              {user.isSignedIn ? <SignOutButton/> : <SignInButton />}
+              </div>
           </div>
         </div>
 
@@ -80,6 +87,10 @@ export default function Navbar() {
                 {cartCount}
               </span>
             </button>
+            <UserButton/>
+            <div className="bg-zinc-700 rounded-md text-white px-3 py-1 hover:bg-blue-800 transition">
+              {user.isSignedIn ? <SignOutButton/> : <SignInButton />}
+              </div>
           </div>
         </div>
       </div>

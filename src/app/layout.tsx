@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import TopBar from "@/components/Topbar";
@@ -6,7 +7,7 @@ import Footer from "@/components/footer";
 import { Poppins } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { SidebarProvider } from "@/context/SidebarContext";
-
+import ClerkProviderClient from '@/components/ClerkProviderClient';
 
 
 const poppins = Poppins({
@@ -27,15 +28,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-       <SidebarProvider>
-        <CartProvider>
-          <TopBar />
-        <Navbar />
-        {children} 
-        
-        <Footer />
-        </CartProvider>
-        </SidebarProvider>
+        {/* ClerkProvider must be inside the body as a client component */}
+        <ClerkProviderClient>
+          <SidebarProvider>
+            <CartProvider>
+              <TopBar />
+              <Navbar />
+              {children}
+
+              <Footer />
+            </CartProvider>
+          </SidebarProvider>
+        </ClerkProviderClient>
       </body>
     </html>
   );
