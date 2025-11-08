@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // ✅ Step 1: Delivery info validate karein
+    // Step 1: Delivery info validate karein
     const delivery = deliverySchema.parse(body.formData);
     const { customer_name, address, city, postalCode, number: phone } = delivery;
 
-    // ✅ Step 2: Cart items extract karein (keys '0', '1', '2'...)
+    // Step 2: Cart items extract karein (keys '0', '1', '2'...)
     const items: { id: number; name: string; price: string; quantity: number }[] = [];
     
     for (const key in body) {

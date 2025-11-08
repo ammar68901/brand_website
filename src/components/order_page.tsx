@@ -1,58 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
-
+import axios from "axios";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+// Adjusted type to match real API
 type Order = {
-  id: string;
-  date: string;
-  total: string;
+  id: number;
+  customer_name: string;
+  phone: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  quantity: number;
+  total_price: string; // e.g. "3040.00"
   status: "pending" | "shipped" | "delivered" | "cancelled";
-  items: { name: string; quantity: number; price: string; image: string }[];
+  created_at: string; // ISO date
+  perfume_name: string;
+  perfume_image: string;
+  perfume_unit_price: string;
 };
 
-const mockOrders: Order[] = [
-  {
-    id: "ORD-1001",
-    date: "2025-09-20",
-    total: "PKR 5,800",
-    status: "delivered",
-    items: [
-      {
-        name: "Luxury Oud Perfume",
-        quantity: 1,
-        price: "PKR 3,000",
-        image: "/image1.jpg",
-      },
-      {
-        name: "Floral EDP",
-        quantity: 2,
-        price: "PKR 2,800",
-        image: "/perfume2.jpg",
-      },
-    ],
-  },
-  {
-    id: "ORD-1002",
-    date: "2025-09-25",
-    total: "PKR 2,500",
-    status: "pending",
-    items: [
-      {
-        name: "Citrus Fresh Perfume",
-        quantity: 1,
-        price: "PKR 2,500",
-        image: "/perfume3.jpg",
-      },
-    ],
-  },
-];
-
 export default function MyOrdersPage() {
-  const [orders] = useState<Order[]>(mockOrders);
+  const [orders, setOrders] = useState<any[]>([{}]);
+  const [loading, setLoading] = useState(true);
+  const [perfumeDetail, setPerfumeDetail] = useState<any>(null);
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/my-order"); //  updated endpoint
+      console.log("API response:", res.data.data);
+      // const transformed = res.data.data.map(transformOrder);
+      setOrders(res.data.data);
+      console.log("Fetched orders:", res.data.data, "setOrders called", orders);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -69,12 +70,19 @@ export default function MyOrdersPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-10 text-center">
+        Loading your orders...
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6 text-center">My Orders</h1>
 
-      <Tabs defaultValue="all" className="w-full">
-        {/* Tabs Header */}
+      {/* <Tabs defaultValue="all" className="w-full">
         <TabsList className="flex flex-wrap justify-center gap-2 mb-8">
           <TabsTrigger value="all">All Orders</TabsTrigger>
           <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -82,8 +90,7 @@ export default function MyOrdersPage() {
           <TabsTrigger value="delivered">Delivered</TabsTrigger>
         </TabsList>
 
-        {/* Orders Content */}
-        {["all", "pending", "shipped", "delivered"].map((tab) => (
+        {(["all", "pending", "shipped", "delivered"] as const).map((tab) => (
           <TabsContent key={tab} value={tab}>
             {orders.filter((o) => tab === "all" || o.status === tab).length === 0 ? (
               <p className="text-center text-gray-500">No orders found.</p>
@@ -97,21 +104,16 @@ export default function MyOrdersPage() {
                       className="shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition"
                     >
                       <CardContent className="p-6">
-                        {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                           <div>
-                            <p className="font-semibold text-lg">
-                              Order #{order.id}
-                            </p>
+                            <p className="font-semibold text-lg">Order #{order.id}</p>
                             <p className="text-sm text-gray-500">{order.date}</p>
                           </div>
                           <Badge className={`${getStatusColor(order.status)} px-3 py-1`}>
-                            {order.status.charAt(0).toUpperCase() +
-                              order.status.slice(1)}
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </Badge>
                         </div>
 
-                        {/* Items */}
                         <div className="space-y-4">
                           {order.items.map((item, i) => (
                             <div
@@ -121,22 +123,20 @@ export default function MyOrdersPage() {
                               <Image
                                 width={80}
                                 height={80}
-                                src={item.image}
+                                src={'https://imgs.search.brave.com/R7uReGAqG637SQ7QMh_dvr76581f6rwWkAhO5ZZGyq0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbG92/ZXBlcmZ1bWUudXMv/Y2RuL3Nob3AvY29s/bGVjdGlvbnMvdW9t/by1ncmVlbi1zdHJh/dmFnYW56YS1mcmFn/cmFuY2UtcmV2aWV3/LWUxNzA5NzY1MTI0/ODUyLndlYnA_dj0x/NzQ4MzEyNDgyJndp/ZHRoPTM4NDA'}
                                 alt={item.name}
                                 className="w-20 h-20 rounded-lg object-cover"
+                                unoptimized // if image is from external URL
                               />
                               <div className="flex-1">
                                 <p className="font-medium">{item.name}</p>
-                                <p className="text-sm text-gray-500">
-                                  Qty: {item.quantity}
-                                </p>
+                                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                               </div>
-                              <p className="font-semibold">{item.price}</p>
+                              <p className="font-semibold">{item.total}</p>
                             </div>
                           ))}
                         </div>
 
-                        {/* Footer */}
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-5">
                           <p className="font-bold text-lg">
                             Total: <span className="text-black">{order.total}</span>
@@ -152,7 +152,114 @@ export default function MyOrdersPage() {
             )}
           </TabsContent>
         ))}
-      </Tabs>
+      </Tabs> */}
+      <div>
+        {orders.length === 0 ? (
+          <p className="text-center text-gray-500">No orders found.</p>
+        ) : (
+          orders.map((order) => (
+            <Card
+              key={order.id}
+              className="shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition mb-4"
+            >
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                  <div>
+                    <p className="font-semibold text-lg">Order #{order.id}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <Badge
+                    className={`${getStatusColor(order.status)} px-3 py-1`}
+                  >
+                    {order.status.charAt(0).toUpperCase() +
+                      order.status.slice(1)}
+                  </Badge>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="font-medium mb-2">Customer Details</h3>
+                      <p className="text-sm text-gray-600">
+                        Name: {order.customer_name}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Phone: {order.phone}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium mb-2">Shipping Address</h3>
+                      <p className="text-sm text-gray-600">{order.address}</p>
+                      <p className="text-sm text-gray-600">
+                        {order.city}, {order.postal_code}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-5">
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      Quantity: {order.quantity}
+                    </p>
+                    <p className="font-bold text-lg">
+                      Total:{" "}
+                      <span className="text-black">
+                        PKR {Number(order.total_price).toLocaleString()}
+                      </span>
+                    </p>
+                  </div>
+                  <>
+                    <Dialog>
+                      <DialogTrigger
+                        onClick={async () => {
+                          try {
+                            const response = await axios.get(
+                              `http://localhost:3000/api/perfume/${order.perfume_id}`
+                            );
+                            const perfume = response.data;
+                            setPerfumeDetail(perfume);
+                          } catch (error) {
+                            console.error(
+                              "Failed to fetch perfume details:",
+                              error
+                            );
+                            alert("Failed to load perfume details");
+                          }
+                        }}
+                      >
+                        Product Details
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <Image
+                            src={perfumeDetail?.image_url}
+                            alt={perfumeDetail?.name}
+                            width={"80"}
+                            height={"80"}
+                          />
+                          <DialogTitle>{perfumeDetail?.name} </DialogTitle>
+                          <DialogDescription>
+                            {perfumeDetail?.description}
+
+                            <p className="mt-2">
+                              Price: PKR{" "}
+                              {Number(perfumeDetail?.price).toLocaleString()}
+                            </p>
+                            <p> {perfumeDetail?.category}</p>
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  </>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
   );
 }
