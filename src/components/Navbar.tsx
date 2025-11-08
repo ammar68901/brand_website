@@ -25,15 +25,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-6">
             <ShopDropdown />
 
-            <button
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 
-              bg-white border border-gray-300 rounded-full shadow-sm 
-              hover:bg-gray-100 hover:text-gray-900 hover:shadow-md 
-              transition-all duration-200 ease-in-out"
-            >
-              <Search className="w-5 h-5" />
-              <span>Search</span>
-            </button>
+           
           </div>
 
           {/* Center: Logo */}
@@ -75,9 +67,7 @@ export default function Navbar() {
 
           {/* Search + Cart */}
           <div className="flex items-center space-x-4">
-            <button>
-              <Search className="w-6 h-6 text-black" />
-            </button>
+           
             <button
               onClick={() => setCartOpen(true)} // 👈 mobile bhi
               className="relative"

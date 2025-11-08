@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, Heart, Star, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
+import axios from "axios";
 import { mainProducts, Product } from "@/data/mainProducts";
 import { useCart } from "@/context/CartContext";
 import { useSidebar } from "@/context/SidebarContext";
+import Perfume_loading_Animation from "./Perfume_loading_Animation";
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -19,22 +20,39 @@ function discountPercent(price?: number, compareAt?: number) {
   const pct = Math.round(((compareAt - price) / compareAt) * 100);
   return `-${pct}%`;
 }
+// const [perfumeData, setPerfumeData] = useState<Product[]|any>([]);
+
+//   const get_perfume_data = async() => {
+//     try{
+//       const response = await axios.get(`http://localhost:3001/api/perfumes/`);
+//       console.log("Perfume data:", response.data);
+//       setPerfumeData(response.data);  
+//       console.log("Perfume data state:", perfumeData);
+//     }catch(error){
+//       console.log("Error fetching perfume data:", error);
+//     }
+//   }
+
+//   useEffect(() => {
+//     get_perfume_data();
+//   }, []);
 
 function ProductCard({ product }: { product: Product }) {
   const [isWishlisted, setWishlisted] = useState(false);
-  const pct = discountPercent(product.price, product.compareAtPrice);
-
+  const pct = discountPercent(product.price, product.price);
   const { addToCart } = useCart();
   const { setSidebarOpen } = useSidebar();
+  
+
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addToCart({
       id: product.id,
-      name: product.title,
+      name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.image,
+      image: product.image_url,
     });
     setSidebarOpen(true); // open sidebar
   };
@@ -50,73 +68,39 @@ function ProductCard({ product }: { product: Product }) {
       >
         {/* Image */}
         <div className="relative aspect-[4/5] overflow-hidden">
+        {product.image_url &&
           <Image
-            width={400}
-            height={400}
-            src={product.image}
-            alt={product.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          width={400}
+          height={400}
+          src={product.image_url || "/placeholder.png"}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          {(product.badgeText || pct) && (
-            <div className="absolute left-2 top-2 flex gap-1 flex-wrap">
-              {product.badgeText && (
-                <span className="rounded-full bg-black/70 text-white px-2 py-0.5 text-[10px] sm:text-xs font-medium">
-                  {product.badgeText}
-                </span>
-              )}
+        }
+         
               {pct && (
                 <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-white">
                   {pct}
                 </span>
               )}
-            </div>
-          )}
         </div>
 
         {/* Details */}
         <div className="p-3 sm:p-4 flex flex-col flex-1">
           <h3 className="line-clamp-1 text-xs sm:text-sm md:text-base font-semibold">
-            {product.title}
+            {product.name}
           </h3>
-          {product.subtitle && (
-            <p className="line-clamp-1 text-[10px] sm:text-xs text-gray-600">
-              {product.subtitle}
-            </p>
-          )}
+         
 
-          {product.lasting && (
-            <p className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500 mt-1">
-              <Clock size={12} /> Lasting: {product.lasting}
-            </p>
-          )}
-
-          {typeof product.rating === "number" && (
-            <div className="flex items-center gap-1 text-yellow-500 mt-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={12}
-                  className={(product.rating ?? 0) > i ? "fill-current" : "opacity-30"}
-                />
-              ))}
-              <span className="ml-1 text-[10px] sm:text-xs text-gray-500">
-                {product.rating.toFixed(1)}
-              </span>
-            </div>
-          )}
+          
 
           {/* Price */}
-          <div className="mt-1 flex items-baseline gap-2">
-            <div className="text-sm sm:text-base md:text-lg font-bold">
+          
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-sm sm:text-base md:text-lg font-bold">
               {formatPKR(product.price)}
-            </div>
-            {product.compareAtPrice && (
-              <div className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">
-                {formatPKR(product.compareAtPrice)}
-              </div>
-            )}
+            </span>
           </div>
-
           {/* Add + Wishlist */}
           <div className="mt-3 flex gap-2">
             <button
@@ -144,6 +128,25 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function ProductGrid() {
+const [perfumeData, setPerfumeData] = useState<Product[]|any>([]);
+const [isLoading, setIsLoading] = useState<boolean>(true);
+  const get_perfume_data = async() => {
+    try{
+      const response = await axios.get(`http://localhost:3000/api/perfumes/`);
+      console.log("Perfume data:", response.data);
+      setPerfumeData(response.data);  
+      console.log("Perfume data state:", perfumeData);
+    }catch(error){
+      setIsLoading(false);
+      console.log("Error fetching perfume data:", error);
+    }finally{
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    get_perfume_data();
+  }, []);
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -156,14 +159,17 @@ export default function ProductGrid() {
         <h2 className="text-4xl sm:text-5xl font-bold mb-5 text-center">
           Trending Now
         </h2>
-
+        {isLoading ? (
+          <Perfume_loading_Animation/>
+      ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 justify-center items-center">
-          {mainProducts.map((p) => (
+          {perfumeData?.map((p:Product) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
+      )}
       </div>
-    </motion.div>
+      </motion.div>
   );
 }
 

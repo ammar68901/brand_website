@@ -4,27 +4,62 @@ import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-
+import axios from "axios"
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
-
+  const [isLoading, setIsloading] = useState<boolean>(true)
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    customer_name: "",
     address: "",
     city: "",
     postalCode: "",
-    country: "",
+    number: 0
   });
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const placedOrder = async () => {
+    setIsloading(true);
+    try {
+      // ✅ Sahi structure banayein
+      const payload: any = {
+        formData: {
+          customer_name: formData.customer_name,
+          address: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          number: formData.number.toString(), // ← Zod string expect karta hai
+        }
+      };
+
+      // Cart items ko "0", "1", ... keys ke saath add karein
+      cart.forEach((item, index) => {
+        payload[index] = {
+          id: item.id,
+          name: item.name,
+          price: item.price.toString(),
+          quantity: item.quantity
+        };
+      });
+
+      const response = await axios.post("/api/orders", payload); // ✅ No body wrapper
+
+      console.log('Success:', response.data);
+      alert("Order placed successfully!");
+      clearCart();
+    } catch (error: any) {
+      console.error('Order error:', error.response?.data || error.message);
+      alert("Failed to place order. Please try again.");
+    } finally {
+      setIsloading(false);
+    }
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Order placed successfully!");
-    clearCart();
+    placedOrder(); // ✅ Form submit ko directly call karein
   };
 
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -40,25 +75,15 @@ export default function CheckoutPage() {
               <label className="block text-sm font-medium text-gray-700">Full Name</label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="customer_name"
+                value={formData.customer_name}
                 onChange={handleChange}
                 required
                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
-              />
-            </div>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Address</label>
@@ -95,19 +120,19 @@ export default function CheckoutPage() {
                   className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Postal Code</label>
+                <input
+                  type="number"
+                  name="number"
+                  value={formData.number}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Country</label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
-              />
-            </div>
 
             <button
               type="submit"

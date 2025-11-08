@@ -1,15 +1,16 @@
 // src/app/men/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ShoppingCart, Heart, Star, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { menProducts } from "@/data/menProducts";
 import { useCart } from "@/context/CartContext";        // ✅ Cart context
 import { useSidebar } from "@/context/SidebarContext";  // ✅ Sidebar context
+import axios from "axios";
+import { Product } from "@/data/mainProducts";
+import { ProductAnimationLoading } from "./Perfume_loading_Animation";
 
-type Product = (typeof menProducts)[number];
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -23,7 +24,7 @@ function discountPercent(price?: number, compareAt?: number) {
 
 function ProductCard({ product }: { product: Product }) {
   const [isWishlisted, setWishlisted] = useState(false);
-  const pct = discountPercent(product.price, product.compareAtPrice);
+  // onst pct = discountPercent(product.price, product.compareAtPrice);
 
   // ✅ Use Cart & Sidebar
   const { addToCart } = useCart();
@@ -32,18 +33,18 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/product_detail/${product.id}`} className="block">
       <div className="group relative flex flex-col overflow-hidden rounded-xl border border-black bg-white text-black shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-        
+
         {/* Image */}
         <div className="relative aspect-[4/5] overflow-hidden">
           <Image
             width={400}
             height={400}
-            src={product.image}
-            alt={product.title}
+            src={product.image_url}
+            alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           {/* Badge */}
-          {(product.badgeText || pct) && (
+          {/* {(product.badgeText || pct) && (
             <div className="absolute left-2 top-2 flex gap-1 flex-wrap">
               {product.badgeText && (
                 <span className="rounded-full bg-black/70 text-white px-2 py-0.5 text-[10px] sm:text-xs font-medium">
@@ -56,29 +57,29 @@ function ProductCard({ product }: { product: Product }) {
                 </span>
               )}
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Details */}
         <div className="p-3 sm:p-4 flex flex-col flex-1">
           <h3 className="line-clamp-1 text-xs sm:text-sm md:text-base font-semibold">
-            {product.title}
+            {product.name}
           </h3>
-          {product.subtitle && (
+          {product.description && (
             <p className="line-clamp-1 text-[10px] sm:text-xs text-gray-600">
-              {product.subtitle}
+              {product.description}
             </p>
           )}
 
           {/* Lasting */}
-          {product.lasting && (
+          {/* {product.lasting && (
             <p className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500 mt-1">
               <Clock size={12} /> Lasting: {product.lasting}
             </p>
-          )}
+          )} */}
 
           {/* Rating */}
-          {typeof product.rating === "number" && (
+          {/* {typeof product.rating === "number" && (
             <div className="flex items-center gap-1 text-yellow-500 mt-1">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -91,18 +92,18 @@ function ProductCard({ product }: { product: Product }) {
                 {product.rating.toFixed(1)}
               </span>
             </div>
-          )}
+          )} */}
 
           {/* Price */}
           <div className="mt-1 flex items-baseline gap-2">
             <div className="text-sm sm:text-base md:text-lg font-bold">
               {formatPKR(product.price)}
             </div>
-            {product.compareAtPrice && (
+            {/* {product.compareAtPrice && (
               <div className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">
                 {formatPKR(product.compareAtPrice)}
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Buttons */}
@@ -113,10 +114,10 @@ function ProductCard({ product }: { product: Product }) {
                 e.preventDefault(); // stop Link navigation
                 addToCart({
                   id: product.id.toString(),
-                  name: product.title,
+                  name: product.name,
                   price: product.price,
                   quantity: 1,
-                  image: product.image,
+                  image: product.name,
                 });
                 openSidebar(); // ✅ sidebar open
               }}
@@ -129,9 +130,8 @@ function ProductCard({ product }: { product: Product }) {
                 e.preventDefault();
                 setWishlisted(!isWishlisted);
               }}
-              className={`rounded-lg border border-black p-1.5 ${
-                isWishlisted ? "bg-red-500 text-white" : "bg-white hover:bg-gray-100"
-              }`}
+              className={`rounded-lg border border-black p-1.5 ${isWishlisted ? "bg-red-500 text-white" : "bg-white hover:bg-gray-100"
+                }`}
             >
               <Heart size={16} className={isWishlisted ? "fill-white" : ""} />
             </button>
@@ -143,7 +143,32 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function MenProductsPage() {
+
+
+
+
+  const [menProductsList, setMenProductsList] = useState<Product[] | []>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchMenProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/perfumes/", {
+          params: { category: "male" },
+        });
+        setMenProductsList(response.data);
+      } catch (error) {
+        console.error("Error fetching men's products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMenProducts();
+  }, []);
+
+
+
   return (
+
     <div className="min-h-screen bg-white px-3 sm:px-4 py-10 text-black">
       <div className="mx-auto max-w-7xl">
         {/* Breadcrumb */}
@@ -158,11 +183,14 @@ export default function MenProductsPage() {
         </h2>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 justify-center items-center">
-          {menProducts.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {isLoading ? (<ProductAnimationLoading />) : (
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 justify-center items-center">
+            {menProductsList.map((p: Product) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
