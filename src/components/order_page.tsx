@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ProductAnimationLoading } from "./Perfume_loading_Animation";
 // Adjusted type to match real API
 type Order = {
   id: number;
@@ -37,6 +38,8 @@ export default function MyOrdersPage() {
   const [orders, setOrders] = useState<any[]>([{}]);
   const [loading, setLoading] = useState(true);
   const [perfumeDetail, setPerfumeDetail] = useState<any>(null);
+  const [perfumeId, setPerfumeId] = useState<number | null>(null);
+  const [OrderDetailLoading, setOrderDetailLoading] = useState(true);
   const fetchOrders = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/my-order"); //  updated endpoint
@@ -51,9 +54,31 @@ export default function MyOrdersPage() {
     }
   };
 
+  const fetchOrderDetails = async () => {
+    try {
+      if (perfumeId) {
+        const response = await axios.get(
+          `http://localhost:3000/api/perfume/${perfumeId}`
+        );
+        const perfume = response.data;
+        setPerfumeDetail(perfume);
+      }
+    } catch (error) {
+      console.error("Failed to fetch perfume details:", error);
+      alert("Failed to load perfume details");
+    } finally {
+      setOrderDetailLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchOrderDetails();
   }, []);
+
+  useEffect(() => {
+    fetchOrderDetails();
+  }, [perfumeId]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -73,7 +98,7 @@ export default function MyOrdersPage() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-10 text-center">
-        Loading your orders...
+        <ProductAnimationLoading />
       </div>
     );
   }
@@ -214,44 +239,34 @@ export default function MyOrdersPage() {
                   <>
                     <Dialog>
                       <DialogTrigger
-                        onClick={async () => {
-                          try {
-                            const response = await axios.get(
-                              `http://localhost:3000/api/perfume/${order.perfume_id}`
-                            );
-                            const perfume = response.data;
-                            setPerfumeDetail(perfume);
-                          } catch (error) {
-                            console.error(
-                              "Failed to fetch perfume details:",
-                              error
-                            );
-                            alert("Failed to load perfume details");
-                          }
-                        }}
+                        onClick={() => setPerfumeId(order?.perfume_id)}
                       >
                         Product Details
                       </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <Image
-                            src={perfumeDetail?.image_url}
-                            alt={perfumeDetail?.name}
-                            width={"80"}
-                            height={"80"}
-                          />
-                          <DialogTitle>{perfumeDetail?.name} </DialogTitle>
-                          <DialogDescription>
-                            {perfumeDetail?.description}
+                      {OrderDetailLoading ? (
+                        <>Loading</>
+                      ) : (
+                        <DialogContent>
+                          <DialogHeader>
+                            <Image
+                              src={perfumeDetail?.image_url}
+                              alt={perfumeDetail?.name || "Perfume Image"}
+                              width={"80"}
+                              height={"80"}
+                            />
+                            <DialogTitle>{perfumeDetail?.name} </DialogTitle>
+                            <DialogDescription>
+                              {perfumeDetail?.description}
 
-                            <p className="mt-2">
-                              Price: PKR{" "}
-                              {Number(perfumeDetail?.price).toLocaleString()}
-                            </p>
-                            <p> {perfumeDetail?.category}</p>
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
+                              <p className="mt-2">
+                                Price: PKR{" "}
+                                {Number(perfumeDetail?.price).toLocaleString()}
+                              </p>
+                              <p> {perfumeDetail?.category}</p>
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      )}
                     </Dialog>
                   </>
                 </div>

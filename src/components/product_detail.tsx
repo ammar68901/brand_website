@@ -23,15 +23,16 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/perfume/${id}`);
+        console.log('product detail through id fetched:', response.data);
         useProduct(response.data);
       } catch (error) {
         console.error("Error fetching product data:", error);
       }
     };
-
     fetchProduct();
   }, [id]);
-
+  
+  console.log('Product Image URL:', product?.image_url)
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -50,16 +51,14 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center md:items-start">
         {/* Left: Image */}
         <div className="relative w-full flex justify-center">
-          <div className="relative w-[85%] h-[350px] overflow-hidden rounded-2xl shadow-md border bg-gray-50">
-            {product && 
+          <div className="relative w-[85%] h-[350px] overflow=-hidden rounded-2xl shadow-md border bg-gray-50">
             <Image
-            src={product.image_url}
+            src={product?.image_url}
             alt={product.name}
             width={600}
             height={350}
             className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
-          }
           </div>
         </div>
 
@@ -187,7 +186,7 @@ export default function ProductDetail() {
                   name: product.name,
                   price: product.price,
                   quantity: 1,
-                  image: product.name,
+                  image: product?.image_url,
                 });
                 }}
             >
