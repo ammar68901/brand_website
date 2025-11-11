@@ -23,39 +23,47 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // ✅ LocalStorage se cart load karna
+  // ✅ Load cart from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem("cart");
-    if (saved) setCart(JSON.parse(saved));
+    if (saved) {
+      try {
+        setCart(JSON.parse(saved));
+      } catch (e) {
+        console.warn("Failed to parse cart from localStorage");
+        setCart([]);
+      }
+    }
   }, []);
 
-  // ✅ Cart ko localStorage me save karna
+  // ✅ Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // ✅ Cart me add karna
+  // ✅ Add item to cart (handles duplicates correctly)
   const addToCart = (item: CartItem) => {
-    setCart((prev) => {
-      const existing = prev.find((p) => p.id === item.id);
+    setCart((prevCart) => {
+      const existing = prevCart.find((p) => p.id === item.id);
       if (existing) {
-        return prev.map((p) =>
-          p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p
+        return prevCart.map((p) =>
+          p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p
         );
+      } else {
+        return [...prevCart, { ...item, quantity: 1 }];
       }
-      return [...prev, item];
     });
   };
 
-  // ✅ Cart se item delete karna
+  // ✅ Remove single item
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((p) => p.id !== id));
+    setCart((prevCart) => prevCart.filter((p) => p.id !== id));
   };
 
-  // ✅ Cart clear karna
+  // ✅ Clear entire cart
   const clearCart = () => setCart([]);
 
-  // ✅ Total items count
+  // ✅ Total item count (e.g., 2 perfumes × 3 = 6 items)
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -67,8 +75,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ✅ Custom hook for easy access
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used within CartProvider");
+  if (!context) {
+    throw new Error("useCart must be used within CartProvider");
+  }
   return context;
 }

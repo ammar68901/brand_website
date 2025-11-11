@@ -4,12 +4,11 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { ShoppingCart, Heart, Star, Clock } from "lucide-react";
 import { motion } from "framer-motion";
-
-import { mainProducts } from "@/data/mainProducts";
-import { menProducts } from "@/data/menProducts";
-import { womenProducts } from "@/data/womenProducts";
-
-const allProducts = [...mainProducts, ...menProducts, ...womenProducts];
+import axios from "axios";
+import { useEffect, useState  } from "react";
+import { Product } from "@/data/mainProducts";
+import {ProductAnimationLoading} from "./Perfume_loading_Animation";
+import { useCart } from "@/context/CartContext";
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -17,12 +16,27 @@ function formatPKR(value: number) {
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = allProducts.find((p) => p.id === id);
+  const { addToCart } = useCart();
 
+  const [product, useProduct] = useState<Product | any>()
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/perfume/${id}`);
+        console.log('product detail through id fetched:', response.data);
+        useProduct(response.data);
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+  
+  console.log('Product Image URL:', product?.image_url)
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
-        Product not found
+        <ProductAnimationLoading/>
       </div>
     );
   }
@@ -37,19 +51,14 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center md:items-start">
         {/* Left: Image */}
         <div className="relative w-full flex justify-center">
-          <div className="relative w-[85%] h-[350px] overflow-hidden rounded-2xl shadow-md border bg-gray-50">
+          <div className="relative w-[85%] h-[350px] overflow=-hidden rounded-2xl shadow-md border bg-gray-50">
             <Image
-              src={product.image}
-              alt={product.title}
-              width={600}
-              height={350}
-              className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+            src={product?.image_url}
+            alt={product.name}
+            width={600}
+            height={350}
+            className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
-            {product.badgeText && (
-              <span className="absolute left-4 top-4 rounded-full bg-black/80 text-white px-3 py-1 text-xs font-medium">
-                {product.badgeText}
-              </span>
-            )}
           </div>
         </div>
 
@@ -57,51 +66,51 @@ export default function ProductDetail() {
         <div className="flex flex-col justify-start">
           {/* Title */}
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-            {product.title}
+            {product.name}
           </h1>
-          {product.subtitle && (
+          {product.description && (
             <p className="text-gray-600 text-base sm:text-lg mb-4">
-              {product.subtitle}
+              {product.description}
             </p>
           )}
 
           {/* Rating */}
-          {typeof product.rating === "number" && (
-            <div className="flex items-center gap-1 text-yellow-500 mb-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={18}
-                  className={(product.rating ?? 0) > i ? "fill-current" : "opacity-30"}
-                />
-              ))}
-              <span className="ml-2 text-gray-600 text-sm">
-                {product.rating.toFixed(1)} / 5
-              </span>
-            </div>
-          )}
+          {/* {typeof product.rating === "number" && ( */}
+          {/* //   <div className="flex items-center gap-1 text-yellow-500 mb-4">
+          //     {Array.from({ length: 5 }).map((_, i) => (
+          //       <Star
+          //         key={i}
+          //         size={18}
+          //         className={(product.rating ?? 0) > i ? "fill-current" : "opacity-30"}
+          //       />
+          //     ))}
+          //     <span className="ml-2 text-gray-600 text-sm">
+          //       {product.rating.toFixed(1)} / 5
+          //     </span>
+          //   </div>
+          // )} */}
 
           {/* Price */}
           <div className="flex items-baseline gap-3 mb-6">
             <div className="text-2xl sm:text-3xl font-bold text-black">
               {formatPKR(product.price)}
             </div>
-            {product.compareAtPrice && (
+            {/* {product.compareAtPrice && (
               <div className="text-lg sm:text-xl text-gray-400 line-through">
                 {formatPKR(product.compareAtPrice)}
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Lasting */}
-          {product.lasting && (
+          {/* {product.lasting && (
             <p className="flex items-center gap-2 text-sm text-gray-500 mb-6">
               <Clock size={16} /> Lasting: {product.lasting}
             </p>
-          )}
+          )} */}
 
           {/* Size */}
-          {product.size && (
+          {/* {product.size && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Available Size
@@ -112,10 +121,10 @@ export default function ProductDetail() {
                 </span>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Notes */}
-          {product.notes && (
+          {/* {product.notes && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Fragrance Notes
@@ -141,27 +150,27 @@ export default function ProductDetail() {
                 )}
               </ul>
             </div>
-          )}
+          )} */}
 
           {/* Best For */}
-          {product.bestFor && (
+          {/* {product.bestFor && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-700 mb-2">Best For</h3>
               <p className="text-sm text-gray-600">{product.bestFor}</p>
             </div>
-          )}
+          )} */}
 
           {/* Suitable For */}
-          {product.suitableFor && (
+          {product.category && (
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-700 mb-2">Suitable For</h3>
-              <p className="text-sm text-gray-600">{product.suitableFor}</p>
+              <p className="text-sm text-gray-600">{product.category}</p>
             </div>
           )}
 
           {/* Description */}
           <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-8">
-            Experience the luxury of {product.title}. Crafted with premium
+            Experience the luxury of {product.name}. Crafted with premium
             ingredients to ensure a long-lasting fragrance that leaves an
             unforgettable impression. Perfect for both daily wear and special
             occasions.
@@ -169,8 +178,22 @@ export default function ProductDetail() {
 
           {/* Buttons */}
           <div className="flex gap-3">
-            <button className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm sm:text-base font-semibold text-white hover:bg-gray-800 transition">
-              <ShoppingCart size={18} /> Add to Cart
+            <button className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm sm:text-base font-semibold text-white hover:bg-gray-800 transition"
+            onClick={(e) => {
+                e.preventDefault(); // stop Link navigation
+                addToCart({
+                  id: product.id.toString(),
+                  name: product.name,
+                  price: product.price,
+                  quantity: 1,
+                  image: product?.image_url,
+                });
+                }}
+            >
+              <ShoppingCart size={18} 
+               
+              
+              /> Add to Cart
             </button>
             <button className="rounded-xl border border-black p-3 hover:bg-gray-100 transition">
               <Heart size={20} />

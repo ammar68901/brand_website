@@ -1,22 +1,14 @@
 'use client';
-import { SignIn, useUser } from '@clerk/nextjs';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
+import { SignIn } from '@clerk/nextjs';
+
+// Clerk automatically:
+// - Redirects signed-in users away from /sign-in
+// - Sends users back to original page after login
 export default function SignInPage() {
-  const { isSignedIn } = useUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    // Agar user already signed in hai, hum redirect kar denge client-side
-    if (isSignedIn) {
-      // change the path as you want (e.g. '/my-orders' or '/')
-      router.replace('/');
-    }
-  }, [isSignedIn, router]);
-
-  // Show nothing (or a loader) while redirecting
-  if (isSignedIn) return null;
-
-  return <SignIn />;
+  return (
+    <div className="h-[80vh] w-full flex items-center justify-center">
+      <SignIn />
+    </div>
+  );
 }

@@ -11,6 +11,18 @@ type CartSidebarProps = {
   onClose: () => void;
 };
 
+
+function isValidUrl(str: string): boolean {
+  if (typeof str !== 'string') return false;
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+
 export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { cart, removeFromCart, clearCart } = useCart();
   const router = useRouter();
@@ -62,13 +74,19 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 className="flex items-center justify-between border-b pb-3"
               >
                 <div className="flex items-center gap-3">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={80}
-                    height={80}
-                    className="rounded-lg object-cover shadow-sm"
-                  />
+                  {item.image && isValidUrl(item.image) ? (
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={80}
+                      height={80}
+                      className="rounded object-cover"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gray-200 rounded flex items-center justify-center">
+                      🖼️
+                    </div>
+                  )}
                   <div>
                     <p className="font-medium text-gray-900">{item.name}</p>
                     <p className="text-sm text-gray-500">
@@ -97,7 +115,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               Clear Cart
             </button>
             <button
-              onClick={() => handleSidebarAction(() => {}, "/checkout")}
+              onClick={() => handleSidebarAction(() => { }, "/checkout")}
               className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
             >
               Checkout

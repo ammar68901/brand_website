@@ -22,9 +22,7 @@ export async function GET(request: NextRequest) {
     let paramIndex = 1;
 
     if (category) { 
-    console.log('before:', paramIndex)
     query += ` AND category = $${paramIndex++}`;
-    console.log('after:', paramIndex)
       values.push(category);
     }
     if (brand) {
@@ -34,10 +32,7 @@ export async function GET(request: NextRequest) {
 
     query += ` ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex}`;
     values.push(limit, offset);
-    console.log(values)
-    console.log('Final Query:', query);
     const result = await db.query(query, values);
-
     return new Response(JSON.stringify(result.rows), {
       status: 200,
       headers: {

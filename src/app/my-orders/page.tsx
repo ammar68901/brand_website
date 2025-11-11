@@ -1,25 +1,28 @@
 'use client';
+
 import MyOrdersPage from '@/components/order_page';
-import { useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
 
 export default function MyOrders() {
-  const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
 
-  useEffect(() => {
-    // wait until Clerk state is loaded
-    if (!isLoaded) return;
+  // Optional: Agar Clerk error ho toh handle karein
+  if (isLoaded && !isSignedIn) {
+    // Clerk middleware ne already redirect kiya hota hai
+    // Lekin agar koi direct URL access kare, toh safe guard
+    return null; // Clerk will redirect via middleware
+  }
 
-    // agar user signed in nahi hai to sign-in page pe bhej do
-    if (!isSignedIn) {
-      router.replace('/sign-in');
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  // show nothing while Clerk is loading or while redirecting
-  if (!isLoaded || !isSignedIn) return null;
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-zinc-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <h1 className="text-2xl font-semibold text-gray-700">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
 
   return <MyOrdersPage />;
 }

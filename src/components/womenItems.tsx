@@ -1,13 +1,16 @@
 // src/app/women/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ShoppingCart, Heart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { womenProducts, Product } from "@/data/womenProducts";
 import { useCart } from "@/context/CartContext";
 import { useSidebar } from "@/context/SidebarContext";
+import axios from "axios";
+import { Product } from "@/data/mainProducts";
+import { ProductAnimationLoading } from "./Perfume_loading_Animation";
+
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -21,7 +24,7 @@ function discountPercent(price?: number, compareAt?: number) {
 
 function ProductCard({ product }: { product: Product }) {
   const [isWishlisted, setWishlisted] = useState(false);
-  const pct = discountPercent(product.price, product.compareAtPrice);
+  // const pct = discountPercent(product.price, product.compareAtPrice);
 
   const { addToCart } = useCart();
   const { setSidebarOpen } = useSidebar();
@@ -30,10 +33,10 @@ function ProductCard({ product }: { product: Product }) {
     e.preventDefault();
     addToCart({
       id: product.id,
-      name: product.title,
+      name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.image,
+      image: product.image_url,
     });
     setSidebarOpen(true); // open the cart sidebar
   };
@@ -46,13 +49,13 @@ function ProductCard({ product }: { product: Product }) {
           <Image
             width={400}
             height={400}
-            src={product.image}
-            alt={product.title}
+            src={product.image_url}
+            alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
           {/* Badge */}
-          {(product.badgeText || pct) && (
+          {/* {(product.badgeText || pct) && (
             <div className="absolute left-2 top-2 flex gap-1 flex-wrap">
               {product.badgeText && (
                 <span className="rounded-full bg-black/70 text-white px-2 py-0.5 text-[10px] sm:text-xs font-medium">
@@ -65,29 +68,29 @@ function ProductCard({ product }: { product: Product }) {
                 </span>
               )}
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Details */}
         <div className="p-3 sm:p-4 flex flex-col flex-1">
           <h3 className="line-clamp-1 text-xs sm:text-sm md:text-base font-semibold">
-            {product.title}
+            {product.name}
           </h3>
-          {product.subtitle && (
+          {product.description && (
             <p className="line-clamp-1 text-[10px] sm:text-xs text-gray-600">
-              {product.subtitle}
+              {product.description}
             </p>
           )}
 
           {/* Lasting time */}
-          {product.lasting && (
+          {/* {product.lasting && (
             <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
               Lasting: {product.lasting}
             </p>
-          )}
+          )} */}
 
           {/* Rating */}
-          {typeof product.rating === "number" && (
+          {/* {typeof product.rating === "number" && (
             <div className="flex items-center gap-1 text-yellow-500 mt-1">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -100,18 +103,18 @@ function ProductCard({ product }: { product: Product }) {
                 {product.rating.toFixed(1)}
               </span>
             </div>
-          )}
+          )} */}
 
           {/* Price */}
           <div className="mt-1 flex items-baseline gap-2">
             <div className="text-sm sm:text-base md:text-lg font-bold">
               {formatPKR(product.price)}
             </div>
-            {product.compareAtPrice && (
+            {/* {product.compareAtPrice && (
               <div className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">
                 {formatPKR(product.compareAtPrice)}
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Add + Wishlist buttons */}
@@ -127,9 +130,8 @@ function ProductCard({ product }: { product: Product }) {
                 e.preventDefault();
                 setWishlisted(!isWishlisted);
               }}
-              className={`rounded-lg border border-black p-1.5 ${
-                isWishlisted ? "bg-red-500 text-white" : "bg-white hover:bg-gray-100"
-              }`}
+              className={`rounded-lg border border-black p-1.5 ${isWishlisted ? "bg-red-500 text-white" : "bg-white hover:bg-gray-100"
+                }`}
             >
               <Heart size={16} className={isWishlisted ? "fill-white" : ""} />
             </button>
@@ -141,6 +143,29 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function WomenProducts() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const [femaleProductList, setfemaleProductList] = useState<Product[] | []>([]);
+  useEffect(() => {
+    const fetchMenProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/perfumes/", {
+          params: { category: "female" },
+        });
+        setfemaleProductList(response.data);
+      } catch (error) {
+        console.error("Error fetching men's products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMenProducts();
+  }, []);
+
+
+
+
+
   return (
     <div className="min-h-screen bg-white px-3 sm:px-4 py-10 text-black">
       <div className="mx-auto max-w-7xl">
@@ -156,11 +181,14 @@ export default function WomenProducts() {
         </h2>
 
         {/* Product Grid */}
+         {isLoading ? (<ProductAnimationLoading/>) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 justify-center items-center">
-          {womenProducts.map((p) => (
+          {femaleProductList.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
+        )}
+
       </div>
     </div>
   );

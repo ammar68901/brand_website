@@ -26,7 +26,7 @@ export default function ShopDropdown() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1 text-black hover:text-gray-600 font-medium transition-colors duration-200"
       >
-        Shop
+        Menu
         <ChevronDown
           size={16}
           className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
@@ -47,6 +47,18 @@ export default function ShopDropdown() {
             className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
           >
             Women&rsquo;s
+          </Link>
+          <Link
+            href="/my-orders"
+            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+           Your Orders
+          </Link>
+          <Link
+            href="/checkout"
+            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+           CheckOut
           </Link>
         </div>
       )}
