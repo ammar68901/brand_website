@@ -1,22 +1,84 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+export const runtime = 'nodejs'; // ✅ Needed for DB access
 
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { parse } from 'cookie';
+import db from './lib/db';
+
+// Public routes for Clerk
 const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-in(.*)',
   '/mens',
   '/womens',
+  '/admin/login', // ← Clerk se bahar, custom auth
   '/about',
+  '/api/admin/log-in',
   '/contact',
   '/api/perfumes',
 ]);
 
-// ✅ Add safety check
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect()
+// Check if route is admin
+const isAdminRoute = (req: NextRequest) => req.nextUrl.pathname.startsWith('/admin');
+
+// ✅ Unified middleware
+export default clerkMiddleware(async (auth:any, request) => {
+  const url = request.nextUrl;
+
+  // Agar /admin/login hai → Clerk se bahar → allow
+  if (url.pathname === '/admin/login') {
+    return NextResponse.next();
   }
+
+  // Agar /admin/* hai → custom admin auth lagao
+  if (isAdminRoute(request)) {
+    // console.log(request)
+    return await handleAdminAuth(request);
+  }
+
+  // protected routes → Clerk se protect karo
+  if (!isPublicRoute(request)) {
+    return await auth.protect();
+  }
+
+  return NextResponse.next();
 });
+
+// ✅ Admin auth logic as helper
+async function handleAdminAuth(request: NextRequest) {
+
+  
+  const cookie = request.headers.get('cookie');
+  // console.log('Admin auth cookie:', cookie);
+  if (!cookie) {
+    return NextResponse.redirect(new URL('/admin/login', request.url));
+  }
+
+  const cookies = parse(cookie);
+  // console.log('Parsed cookies:', cookies);
+  const session = cookies['admin_session'];
+  // console.log('Admin session cookie:', session);
+  if (!session) {
+    return NextResponse.redirect(new URL('/admin/login', request.url));
+  }
+
+  try {
+    const [adminId] = Buffer.from(session, 'base64').toString().split(':');
+    // console.log('Decoded admin ID from session:', adminId);
+    const result = await db.query('SELECT * FROM admin WHERE id = $1', [adminId]);
+
+    console.log('Admin lookup result:', result.rows);
+
+    // console.log('Admin lookup result:', result.rows);
+    if (result.rows.length === 0) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+    return NextResponse.next();
+  } catch (error) {
+    // console.error('Error during admin auth:', error);
+    return NextResponse.redirect(new URL('/admin/login', request.url));
+  }
+}
 
 export const config = {
   matcher: [

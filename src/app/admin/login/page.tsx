@@ -1,23 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import axios from "axios";
+import toast from "react-hot-toast";
+import { EyeClosed, EyeIcon } from "lucide-react";
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [togglePass, setTogglePass] = useState(false);
+  const adminLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/admin/log-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", //  Zaroori
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      console.log("Response status:", res.status);
+      console.log(res)
+      if(res.ok && res.status === 200){
+        router.push("/admin/dashboard");
+        toast.success("Login Successful admin");
+      }else{
+        toast.error(res.statusText as any || "Login failed" );
+
+      }
+    } catch (error:any) {
+      console.log(error);
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // ⚡ Simple fake login
-    if (email === "admin@example.com" && password === "123456") {
-      localStorage.setItem("isAdmin", "true");
-      router.push("/admin");
-    } else {
-      alert("❌ Invalid credentials");
-    }
+    adminLogin();
   };
 
   return (
@@ -37,15 +59,31 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          <div>
             <label className="block text-sm font-medium mb-1">Password</label>
-            <input
+          <div className="w-full flex items-center justify-between gap-2">
+            <div className="flex items-center justify-center gap-2">
+            {togglePass ? (
+               <input
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              />
+            ) : (
+               <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
-            />
+              />
+            ) }
+              </div>
+
+            <span onClick={()=> setTogglePass((prev) => !prev)} className="cursor-pointer p-2 border rounded bg-gray-100">
+              {togglePass ? <EyeIcon/> : <EyeClosed/>}
+            </span>
           </div>
 
           <button
