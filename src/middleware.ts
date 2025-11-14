@@ -15,19 +15,24 @@ const isPublicRoute = createRouteMatcher([
   '/about',
   '/api/admin/log-in',
   '/contact',
+  '/api/admin/countusers',
   '/api/perfumes',
 ]);
 
 // Check if route is admin
-const isAdminRoute = (req: NextRequest) => req.nextUrl.pathname.startsWith('/admin');
+const isAdminRoute = (req: NextRequest) => req.nextUrl.pathname.startsWith('/admin-role');
 
 // ✅ Unified middleware
 export default clerkMiddleware(async (auth:any, request) => {
   const url = request.nextUrl;
 
   // Agar /admin/login hai → Clerk se bahar → allow
-  if (url.pathname === '/admin/login') {
+  if (url.pathname === '/admin-role/login') {
     return NextResponse.next();
+  }
+
+  if (url.pathname === "/api/admin/countusers") {
+    return NextResponse.next()
   }
 
   // Agar /admin/* hai → custom admin auth lagao
@@ -44,14 +49,16 @@ export default clerkMiddleware(async (auth:any, request) => {
   return NextResponse.next();
 });
 
-// ✅ Admin auth logic as helper
+// --------------------------------------------------------------
+
+//  Admin auth logic as helper
 async function handleAdminAuth(request: NextRequest) {
 
   
   const cookie = request.headers.get('cookie');
   // console.log('Admin auth cookie:', cookie);
   if (!cookie) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL('/admin-role/login', request.url));
   }
 
   const cookies = parse(cookie);
@@ -59,7 +66,7 @@ async function handleAdminAuth(request: NextRequest) {
   const session = cookies['admin_session'];
   // console.log('Admin session cookie:', session);
   if (!session) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL('/admin-role/login', request.url));
   }
 
   try {
@@ -71,12 +78,12 @@ async function handleAdminAuth(request: NextRequest) {
 
     // console.log('Admin lookup result:', result.rows);
     if (result.rows.length === 0) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      return NextResponse.redirect(new URL('/admin-role/login', request.url));
     }
     return NextResponse.next();
   } catch (error) {
     // console.error('Error during admin auth:', error);
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL('/admin-role/login', request.url));
   }
 }
 

@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
       console.log("Response status:", res.status);
       console.log(res)
       if(res.ok && res.status === 200){
-        router.push("/admin/dashboard");
+        router.push("/admin-role");
         toast.success("Login Successful admin");
       }else{
         toast.error(res.statusText as any || "Login failed" );
