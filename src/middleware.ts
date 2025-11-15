@@ -16,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/admin/log-in',
   '/contact',
   '/api/admin/countusers',
+  "api/admin/orders-product-count", 
   '/api/perfumes',
 ]);
 
@@ -32,6 +33,10 @@ export default clerkMiddleware(async (auth:any, request) => {
   }
 
   if (url.pathname === "/api/admin/countusers") {
+    return NextResponse.next()
+  }
+
+  if (url.pathname === "/api/admin/orders-product-count") {
     return NextResponse.next()
   }
 

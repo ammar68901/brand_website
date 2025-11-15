@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 type Product = {
   id: string;
@@ -16,6 +17,19 @@ export default function ProductsPage() {
     { id: "2", title: "Perfume B", price: 2500, inStock: false },
     { id: "3", title: "Perfume C", price: 1800, inStock: true },
   ]);
+
+  useEffect(()=>{
+    const fetchallProducts = async()=>{
+      try{
+        const res = await axios.get("http://localhost:3000/api/perfumes");
+        const data = await res.data;
+        console.log('Fetched products:', data);
+      } catch(e:any){
+        console.log('Error fetching products:', e); 
+      } 
+    }
+    fetchallProducts()
+  })
 
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
