@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     console.log('Offset:', offset);
 
     // Build query
-    let query = 'SELECT id, name, brand, price, category, image_url FROM perfumes WHERE 1=1';
+    let query = 'SELECT id, name, brand, price,stock, category, image_url FROM perfumes WHERE 1=1';
     const values: any[] = [];
     let paramIndex = 1;
 

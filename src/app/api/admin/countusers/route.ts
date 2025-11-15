@@ -26,7 +26,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // 📊 3. Agar admin valid hai → Clerk se user count fetch karein
+  // 3. Agar admin valid hai → Clerk se user count fetch karein
   try {
     const res = await fetch('https://api.clerk.com/v1/users/count', {
       method: 'GET',
