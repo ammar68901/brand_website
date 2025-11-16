@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import toast from "react-hot-toast";
 
 
 
@@ -57,10 +58,10 @@ export default function CheckoutPage() {
       };
     });
 
-    const response = await axios.post("/api/orders", payload);
+    const response = await axios.post("http://localhost:3000/api/orders", payload);
 
     console.log("Success:", response.data);
-    alert("Order placed successfully!");
+    toast.success("Order placed successfully!");
 
     //  Form data ko reset karein
     setFormData({
@@ -75,8 +76,8 @@ export default function CheckoutPage() {
     }
     clearCart(); //  Cart bhi clear karein
   } catch (error: any) {
-    console.error("Order error:", error.response?.data || error.message);
-    alert("Failed to place order. Please try again.");
+    console.error("Order error:", error.response?.data || error.details.message);
+    toast.error("Failed to place order check phone number Address postal code.");
   } finally {
     setIsloading(false);
   }

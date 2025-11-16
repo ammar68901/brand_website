@@ -1,12 +1,12 @@
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest } from 'next/server';
-import { z } from 'zod';
 import db from '@/lib/db';
+import { verify } from 'jsonwebtoken';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Zod schema for delivery info
 const deliverySchema = z.object({
   customer_name: z.string().min(2).max(100),
-  address: z.string().min(10).max(500),
+  address: z.string().min(5).max(500),
   city: z.string().min(2).max(50),
   postalCode: z.string().max(10).optional(), // note: camelCase
   number: z.string().regex(/^03\d{9}$/, "Invalid Pakistani phone number"),
@@ -14,10 +14,23 @@ const deliverySchema = z.object({
 
 // Main handler
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
+   const token = request.cookies.get('token')?.value;
+    console.log(token)
+    if (!token) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+    
+    let userId: number;
+    try {
+      const decoded = verify(token, process.env.JWT_SECRET!) as { userId: number };
+      userId = decoded.userId;
+      
+    } catch (error) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+    if (!userId) {
+      return NextResponse.json({ message: "Please Login" }, { status: 400 });
+    }
 
   try {
     const body = await request.json();
@@ -95,9 +108,32 @@ export async function POST(request: NextRequest) {
           postalCode || null
         ]
       );
-    }
+    } 
+    let updateStock: { id: number; stock: number }[] = [];
 
-    return new Response(JSON.stringify({ success: true, total: totalAmount }), {
+    for (const item of items) {
+      const res = await db.query(
+        `UPDATE perfumes
+         SET stock = stock - $1
+         WHERE id = $2 AND stock >= $1
+         RETURNING id, stock`,
+        [Number(item.quantity), item.id]
+      );
+
+      // If no rows returned, either perfume not found or insufficient stock
+      if (res.rows.length === 0) {
+        return NextResponse.json(
+          JSON.stringify({ error: `Insufficient stock for perfume ${item.id}` }),
+          { status: 400 }
+        );
+      }
+
+      updateStock.push(res.rows[0]);
+    }
+    
+   
+
+    return new Response(JSON.stringify({ success: true, total: totalAmount,stock: updateStock  }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
     });

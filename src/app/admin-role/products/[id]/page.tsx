@@ -1,101 +1,158 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function EditProductPage() {
-  const { id } = useParams();
   const router = useRouter();
+  const params = useParams();
+  const id = (params?.id as string) || '';
 
-  // Dummy initial data (future mein API se fetch hoga)
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState<number | "">("");
-  const [inStock, setInStock] = useState(true);
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState("female");
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // ✅ Load product data
   useEffect(() => {
-    // ⚡ Future mein backend se fetch by id
-    // Abhi dummy fill
-    setTitle("Perfume " + id);
-    setPrice(2500);
-    setInStock(true);
+    const fetchProduct = async () => {
+      const res = await fetch(`http://localhost:3000/api/perfume/${id}`);
+      const data = await res.json();
+      setName(data.name);
+      setBrand(data.brand);
+      setCategory(data.category);
+      setPrice(Number(data.price));
+      setStock(Number(data.stock));
+      setDescription(data.description || "");
+      setImageUrl(data.image_url);
+      setImagePreview(data.image_url);
+    };
+    if (id) fetchProduct();
   }, [id]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 🖼️ Image select → preview
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+    }
+  };
+
+  // ✅ Form submit
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('brand', brand);
+    formData.append('category', category);
+    formData.append('price', price.toString());
+    formData.append('stock', stock.toString());
+    formData.append('description', description);
+    formData.append('imageUrl', imageUrl); // existing URL
 
-    const updatedProduct = {
-      id,
-      title,
-      price,
-      inStock,
-    };
+    // Agar nayi image select ki hai
+    if (fileInputRef.current?.files?.[0]) {
+      formData.append('image', fileInputRef.current.files[0]);
+    }
 
-    console.log("Updated Product:", updatedProduct);
-    alert("✅ Product updated successfully!");
-    router.push("/admin/products");
+    const res = await fetch(`http://localhost:3000/api/admin/edit-product/${id}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (res.ok) {
+      toast.success('Product updated successfully');
+      router.push('/admin-role/products');
+    } else {
+      const err = await res.json();
+      toast.error(`Error: ${err.error || 'Failed to update product'}`);
+    }
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-xl p-8">
-      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-700">
-        ✏️ Edit Product
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Product Name */}
+    <div className="max-w-2xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Image Upload */}
         <div>
-          <label className="block text-sm font-semibold mb-2">
-            Product Name
-          </label>
+          <label className="block mb-2">Image</label>
           <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full border-2 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            placeholder="Enter product name"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            ref={fileInputRef}
+            className="block w-full"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Example: Perfume A, Perfume B
-          </p>
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-2 w-32 h-32 object-cover rounded"
+            />
+          )}
         </div>
 
-        {/* Price */}
-        <div>
-          <label className="block text-sm font-semibold mb-2">Price (PKR)</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
-            required
-            className="w-full border-2 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            placeholder="Enter price in PKR"
-          />
-          <p className="text-xs text-gray-500 mt-1">Only numeric values</p>
-        </div>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder="Brand"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="unisex">Unisex</option>
+        </select>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(Number(e.target.value))}
+          placeholder="Price"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="number"
+          value={stock}
+          onChange={(e) => setStock(Number(e.target.value))}
+          placeholder="Stock"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description"
+          className="w-full p-2 border rounded"
+          rows={3}
+        />
 
-        {/* Stock */}
-        <div>
-          <label className="block text-sm font-semibold mb-2">Stock Status</label>
-          <select
-            value={inStock ? "yes" : "no"}
-            onChange={(e) => setInStock(e.target.value === "yes")}
-            className="w-full border-2 rounded-lg px-4 py-3 text-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          >
-            <option value="yes">✅ Available</option>
-            <option value="no">❌ Out of Stock</option>
-          </select>
-        </div>
-
-        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white text-lg font-semibold py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+          className="bg-black text-white px-6 py-2 rounded"
         >
-          💾 Update Product
+          Update Product
         </button>
       </form>
     </div>
   );
 }
-

@@ -5,10 +5,10 @@ import Link from "next/link";
 
 export default function Sidebar() {
   const items = [
-    { href: "/admin", label: "Dashboard" },
-    { href: "/admin/products", label: "Products" },
-    { href: "/admin/orders", label: "Orders" },
-    { href: "/admin/customers", label: "Customers" },
+    { href: "/admin-role", label: "Dashboard" },
+    { href: "/admin-role/products", label: "Products" },
+    { href: "/admin-role/orders", label: "Orders" },
+    { href: "/admin-role/customers", label: "Customers" },
   ];
 
   return (
