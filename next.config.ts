@@ -1,18 +1,23 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig:NextConfig = {
   images: {
     remotePatterns: [
-      {
+     {
         protocol: 'https',
-        hostname: 'imgs.search.brave.com',
+        hostname: 'res.cloudinary.com',
         port: '',
-        pathname: '/**', // Sab kuch allow karo
+        pathname: '/**',
       },
+      // Agar koi aur domain use kar rahe hain, usko yahan add karein
+      // {
+      //   protocol: 'https',
+      //   hostname: 'example.com',
+      //   port: '',
+      //   pathname: '/**',
+      // },
     ],
   },
-  /* config options here */
 };
-
-export default nextConfig;
-
+module.exports = nextConfig;

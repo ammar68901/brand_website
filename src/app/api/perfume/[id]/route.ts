@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const result = await db.query(
-      `SELECT id, name, brand, price, category, description, image_url, created_at
+      `SELECT id, name, brand, price, category, description,stock, image_url, created_at
        FROM perfumes WHERE id = $1`,
       [perfume_id]
     );

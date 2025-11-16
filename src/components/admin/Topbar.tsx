@@ -1,6 +1,4 @@
 "use client";
-
-import { useAdmin } from "@/context/adminContext";
 import React from "react";
 
 export default function Topbar() {

@@ -8,6 +8,8 @@ import { Poppins } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { SidebarProvider } from "@/context/SidebarContext";
 import ClerkProviderClient from '@/components/ClerkProviderClient';
+import { Toaster } from "react-hot-toast";
+import { UserProvider } from "@/context/userContext";
 
 
 const poppins = Poppins({
@@ -29,17 +31,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
         {/* ClerkProvider must be inside the body as a client component */}
-        <ClerkProviderClient>
           <SidebarProvider>
+            <UserProvider>
             <CartProvider>
               <TopBar />
               <Navbar />
               {children}
-
+              <Toaster/>
               <Footer />
             </CartProvider>
+            </UserProvider>
           </SidebarProvider>
-        </ClerkProviderClient>
       </body>
     </html>
   );

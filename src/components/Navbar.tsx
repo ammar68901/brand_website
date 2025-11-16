@@ -1,19 +1,56 @@
 "use client";
-import Link from "next/link";
-import { ShoppingCart, Search, X, User } from "lucide-react";
-import { useState } from "react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useCart } from "@/context/CartContext"; // 
+import { useUser } from "@/context/userContext";
+import axios from "axios";
 import { motion } from "framer-motion";
+import { ShoppingCart, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import CartSidebar from "./CartSidebar"; // 
 import ShopDropdown from "./shopbtnInNav";
-import CartSidebar from "./CartSidebar"; // 👈 import
-import { useCart } from "@/context/CartContext"; // 👈 cart count ke liye
-import {UserButton, SignOutButton, SignInButton, useUser} from "@clerk/nextjs";
-
+import { Button } from "./ui/button";
 export default function Navbar() {
+
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false); // mobile menu
   const [cartOpen, setCartOpen] = useState(false); // cart sidebar
-  const user = useUser()
   const { cart } = useCart();
+  const {emailUser,setEmailUser} = useUser()
+      useEffect(()=> {
+      const fetchUserDetail = async ()=> {
+        try {
+          const res = await axios.get('http://localhost:3000/api/me')
+          setEmailUser(res.data.email)
 
+          if(res.status === 401){
+            router.push('/login')
+          } 
+          if (res.status === 404){
+            router.push('/register')
+          }
+        } catch (error:any) {
+          toast.error("error",error.message)
+        }
+      }
+  
+      fetchUserDetail()
+    },[])
+  
+    const handleLOgout = async()=> {
+      try{
+        const res = await axios.post("/api/auth/logout")
+        toast.success("Logout Success")
+        if (res.status == 200){
+          router.push('/login')
+        }
+        console.log(res.data)
+      }catch(e){
+        toast.error('something went wrong')
+      }
+    }
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   // console.log(user)
   return (
@@ -29,7 +66,7 @@ export default function Navbar() {
           </div>
 
           {/* Center: Logo */}
-          <div className="text-5xl font-bold text-black">Hevina&apos;s</div>
+          <div className="text-5xl font-bold text-black"><Link href={'/'}>Hevina&apos;s</Link></div>
 
           {/* Right side: Cart */}
           <div className="flex items-center justify-center gap-5">
@@ -42,12 +79,24 @@ export default function Navbar() {
                 {cartCount}
               </span>
             </button>
+           
             <div>
-              <UserButton/>
+              {emailUser ? (
+                <>
+                <Avatar>
+                <AvatarFallback>{emailUser?.toUpperCase().split("")[0]}</AvatarFallback>
+              </Avatar>
+                </>
+              ):(<><Link href={'/login'}>Login</Link></>)}
             </div>
-              <div className="bg-zinc-700 rounded-md text-white px-3 py-1 hover:bg-blue-800 transition">
-              {user.isSignedIn ? <SignOutButton/> : <SignInButton />}
-              </div>
+            <div>
+              {emailUser && (
+                <Button onClick={handleLOgout}>
+                  logout
+                </Button>
+              )}
+            </div>
+              
           </div>
         </div>
 
@@ -77,10 +126,16 @@ export default function Navbar() {
                 {cartCount}
               </span>
             </button>
-            <UserButton/>
-            <div className="bg-zinc-700 rounded-md text-white px-3 py-1 hover:bg-blue-800 transition">
-              {user.isSignedIn ? <SignOutButton/> : <SignInButton />}
-              </div>
+            <div>
+              {emailUser ? (
+                <>
+                <Avatar>
+                <AvatarFallback>{emailUser?.toUpperCase().split("")[0]}</AvatarFallback>
+              </Avatar>
+                </>
+              ):(<><Link href={'/login'}>Login</Link></>)}
+            </div>
+             
           </div>
         </div>
       </div>
@@ -118,6 +173,13 @@ export default function Navbar() {
             About Us
             <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-black transition-all duration-300 group-hover:w-full"></span>
           </Link>
+          <div>
+              {emailUser && (
+                <Button onClick={handleLOgout}>
+                  logout
+                </Button>
+              )}
+            </div>
           <div>
             <p className="mb-2">Contact</p>
             <div className="flex flex-col text-sm gap-1">

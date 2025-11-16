@@ -1,94 +1,80 @@
-export const runtime = 'nodejs'; // ✅ Needed for DB access
+export const runtime = 'nodejs'
 
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { verify } from 'jsonwebtoken';
 import { parse } from 'cookie';
-import db from './lib/db';
+import db from '@/lib/db';
 
-// Public routes for Clerk
-const isPublicRoute = createRouteMatcher([
+// ✅ Public routes (non-authenticated access allowed)
+const publicPaths = [
   '/',
-  '/sign-in(.*)',
+  '/login',
+  '/register',
   '/mens',
   '/womens',
-  '/admin/login', // ← Clerk se bahar, custom auth
   '/about',
-  '/api/admin/log-in',
   '/contact',
-  '/api/admin/countusers',
-  "api/admin/orders-product-count", 
-  '/api/perfumes',
-]);
+  '/api/auth/login',
+  '/api/auth/register', 
+  '/api/perfumes'
+];
 
-// Check if route is admin
+// ✅ Check if route is admin route
 const isAdminRoute = (req: NextRequest) => req.nextUrl.pathname.startsWith('/admin-role');
 
-// ✅ Unified middleware
-export default clerkMiddleware(async (auth:any, request) => {
-  const url = request.nextUrl;
-
-  // Agar /admin/login hai → Clerk se bahar → allow
-  if (url.pathname === '/admin-role/login') {
-    return NextResponse.next();
-  }
-
-  if (url.pathname === "/api/admin/countusers") {
-    return NextResponse.next()
-  }
-
-  if (url.pathname === "/api/admin/orders-product-count") {
-    return NextResponse.next()
-  }
-
-  // Agar /admin/* hai → custom admin auth lagao
-  if (isAdminRoute(request)) {
-    // console.log(request)
-    return await handleAdminAuth(request);
-  }
-
-  // protected routes → Clerk se protect karo
-  if (!isPublicRoute(request)) {
-    return await auth.protect();
-  }
-
-  return NextResponse.next();
-});
-
-// --------------------------------------------------------------
-
-//  Admin auth logic as helper
+// ✅ Admin auth helper
 async function handleAdminAuth(request: NextRequest) {
-
-  
   const cookie = request.headers.get('cookie');
-  // console.log('Admin auth cookie:', cookie);
   if (!cookie) {
     return NextResponse.redirect(new URL('/admin-role/login', request.url));
   }
 
   const cookies = parse(cookie);
-  // console.log('Parsed cookies:', cookies);
   const session = cookies['admin_session'];
-  // console.log('Admin session cookie:', session);
   if (!session) {
     return NextResponse.redirect(new URL('/admin-role/login', request.url));
   }
 
   try {
     const [adminId] = Buffer.from(session, 'base64').toString().split(':');
-    // console.log('Decoded admin ID from session:', adminId);
-    const result = await db.query('SELECT * FROM admin WHERE id = $1', [adminId]);
-
-    console.log('Admin lookup result:', result.rows);
-
-    // console.log('Admin lookup result:', result.rows);
+    const result = await db.query('SELECT id FROM admin WHERE id = $1', [adminId]);
     if (result.rows.length === 0) {
       return NextResponse.redirect(new URL('/admin-role/login', request.url));
     }
     return NextResponse.next();
   } catch (error) {
-    // console.error('Error during admin auth:', error);
     return NextResponse.redirect(new URL('/admin-role/login', request.url));
+  }
+}
+
+// ✅ Main middleware
+export async function middleware(request: NextRequest) {
+  const url = request.nextUrl;
+
+  // 1. Public paths → allow immediately
+  if (publicPaths.some(path => 
+    url.pathname === path || 
+    url.pathname.startsWith(`${path}/`)
+  )) {
+    return NextResponse.next();
+  }
+
+  // 2. Admin routes → use custom admin auth
+  if (isAdminRoute(request)) {
+    return await handleAdminAuth(request);
+  }
+
+  // 3. All other protected routes → use JWT auth (for regular users)
+  const token = request.cookies.get('token')?.value;
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  try {
+    verify(token, process.env.JWT_SECRET!);
+    return NextResponse.next();
+  } catch (error) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 }
 

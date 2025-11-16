@@ -1,22 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import Image from "next/image";
-import axios from "axios";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { ProductAnimationLoading } from "./Perfume_loading_Animation";
+import Link from "next/link";
 // Adjusted type to match real API
 type Order = {
   id: number;
@@ -180,7 +177,24 @@ export default function MyOrdersPage() {
       </Tabs> */}
       <div>
         {orders.length === 0 ? (
-          <p className="text-center text-gray-500">No orders found.</p>
+          <>
+          <div className=" flex-l items-center justify-center ">
+
+          <p className="text-center text-gray-500">No orders found.
+
+          </p>
+          </div>
+          <div className="w-full h-full flex items-center justify-center gap-3">
+            <div>
+          <Link className="text-blue-400" href={'/mens'}>Men Perfumes</Link>
+            </div>
+              <div>
+
+          <Link className="text-red-500" href={'/womens'}>Women Perfumes</Link>
+              </div>
+          </div>
+          </>
+
         ) : (
           orders.map((order) => (
             <Card
@@ -248,7 +262,7 @@ export default function MyOrdersPage() {
                       ) : (
                         <DialogContent>
                           <DialogHeader>
-                            <Image
+                            <img
                               src={perfumeDetail?.image_url}
                               alt={perfumeDetail?.name || "Perfume Image"}
                               width={"80"}
