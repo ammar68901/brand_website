@@ -31,12 +31,12 @@ export default function LoginPage() {
       ]);
 
       // use relative API path in Next.js
-      const res = await axios.post('http://localhost:3000/api/auth/login', { email, password });
+      const res = await axios.post('/api/auth/login', { email, password });
 
       // success feedback + navigate
       toast.success('Logged in successfully');
       router.back();
-      
+      window.location.reload();
     } catch (err: any) {
       const { toast } = await import('react-hot-toast');
       let message = 'Login failed';

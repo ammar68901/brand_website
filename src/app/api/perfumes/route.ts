@@ -6,15 +6,11 @@ export const dynamic = 'force-dynamic'; // Always run on server
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    console.log(searchParams);
     const category = searchParams.get('category'); // 'male', 'female', or null
     const brand = searchParams.get('brand');
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
-    console.log('Page:', page);
     const limit = Math.min(100, parseInt(searchParams.get('limit') || '20')); // Max 100 per page
-    console.log('limit:', limit);
     const offset = (page - 1) * limit;
-    console.log('Offset:', offset);
 
     // Build query
     let query = 'SELECT id, name, brand, price,stock, category, image_url FROM perfumes WHERE 1=1';

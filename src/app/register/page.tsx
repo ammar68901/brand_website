@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [userName, setUsername] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
   const [isLoading, setIsloading] = useState(false);
@@ -20,15 +21,17 @@ export default function LoginPage() {
 
     try {
       setIsloading(true);
-      const res = await axios.post("http://localhost:3000/api/auth/register", {
+      const res = await axios.post("/api/auth/register", {
         email,
         password,
         phoneNumber,
+        username: userName,
       });
 
       if (res.status === 201) {
         toast.success("Registration successful!");
-        router.push("/login");
+        router.push("/");
+        window.location.reload();
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || "Registration failed";
@@ -57,6 +60,14 @@ export default function LoginPage() {
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Phone Number"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="text"
+          value={userName}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
           className="w-full p-2 border rounded"
           required
         />

@@ -68,9 +68,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           {cart.length === 0 ? (
             <p className="text-gray-500 text-center mt-10">Your cart is empty.</p>
           ) : (
-            cart.map((item) => (
+            cart.map((item:any,i) => (
               <div
-                key={item.id}
+                key={i}
                 className="flex items-center justify-between border-b pb-3"
               >
                 <div className="flex items-center gap-3">

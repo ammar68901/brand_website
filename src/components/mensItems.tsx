@@ -117,7 +117,7 @@ function ProductCard({ product }: { product: Product }) {
                   name: product.name,
                   price: product.price,
                   quantity: 1,
-                  image: product.name,
+                  image: product.image_url,
                 });
                 openSidebar(); // ✅ sidebar open
               }}
@@ -152,7 +152,7 @@ export default function MenProductsPage() {
   useEffect(() => {
     const fetchMenProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/perfumes/", {
+        const response = await axios.get("/api/perfumes/", {
           params: { category: "male" },
         });
         setMenProductsList(response.data);
