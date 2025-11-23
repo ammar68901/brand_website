@@ -16,7 +16,6 @@ export default function ClassicContactForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     // Yahan aap API call ya backend integration kar sakte ho
     alert("Thank you! Your message has been sent.");
     setFormData({ name: "", email: "", phone: "", message: "" });

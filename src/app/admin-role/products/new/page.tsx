@@ -20,8 +20,6 @@ export default function NewProductPage() {
       inStock,
     };
 
-    console.log("New product added:", newProduct);
-
     // Future mein yeh backend par save hoga
     alert("✅ Product added successfully!");
 

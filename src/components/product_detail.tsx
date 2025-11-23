@@ -9,6 +9,7 @@ import { useEffect, useState  } from "react";
 import { Product } from "@/data/mainProducts";
 import {ProductAnimationLoading} from "./Perfume_loading_Animation";
 import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -22,17 +23,14 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/perfume/${id}`);
-        console.log('product detail through id fetched:', response.data);
+        const response = await axios.get(`/api/perfume/${id}`); 
         useProduct(response.data);
       } catch (error) {
-        console.error("Error fetching product data:", error);
+        toast.error("Error fetching product data");
       }
     };
     fetchProduct();
   }, [id]);
-  
-  console.log('Product Image URL:', product?.image_url)
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -57,6 +55,8 @@ export default function ProductDetail() {
             alt={product.name}
             width={600}
             height={350}
+            priority={true}
+            quality={100}
             className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </div>

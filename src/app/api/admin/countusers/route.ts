@@ -7,9 +7,7 @@ export const runtime = 'nodejs';
 export async function GET() {
   // 1. Admin session cookie check karein
   const cookieStore = await cookies();
-  console.log('Cookie Store:',await (cookieStore));
   const sessionToken = (await cookieStore).get('admin_session')?.value;
-  console.log('Admin session token:', sessionToken);
   if (!sessionToken) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

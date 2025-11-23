@@ -17,12 +17,12 @@ export default function Navbar() {
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false); // mobile menu
   const [cartOpen, setCartOpen] = useState(false); // cart sidebar
-  const { cart } = useCart();
+  const { cart,clearCart } = useCart();
   const {emailUser,setEmailUser} = useUser()
       useEffect(()=> {
       const fetchUserDetail = async ()=> {
         try {
-          const res = await axios.get('http://localhost:3000/api/me')
+          const res = await axios.get('/api/me')
           setEmailUser(res.data.email)
 
           if(res.status === 401){
@@ -43,10 +43,8 @@ export default function Navbar() {
       try{
         const res = await axios.post("/api/auth/logout")
         toast.success("Logout Success")
-        if (res.status == 200){
-          router.push('/login')
-        }
-        console.log(res.data)
+        window.location.reload();
+        clearCart();
       }catch(e){
         toast.error('something went wrong')
       }
@@ -167,6 +165,10 @@ export default function Navbar() {
           </Link>
           <Link href="/womens" onClick={() => setMenuOpen(false)} className="relative group">
             Womens
+            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-black transition-all duration-300 group-hover:w-full"></span>
+          </Link>
+          <Link href="/my-orders" onClick={() => setMenuOpen(false)} className="relative group">
+            My Orders
             <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-black transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link href="/about" onClick={() => setMenuOpen(false)} className="relative group">

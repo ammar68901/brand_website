@@ -60,7 +60,6 @@ export default function CheckoutPage() {
 
     const response = await axios.post("http://localhost:3000/api/orders", payload);
 
-    console.log("Success:", response.data);
     toast.success("Order placed successfully!");
 
     //  Form data ko reset karein

@@ -6,10 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 
-  // console.log("User:", user);
-  
   const token = request.cookies.get('token')?.value;
-  console.log(token)
   if (!token) {
     return new Response('Unauthorized', { status: 401 });
   }
@@ -25,13 +22,11 @@ export async function GET(request: NextRequest) {
   if (!userId) {
     return NextResponse.json({ message: "Please Login" }, { status: 400 });
   }
-  console.log('userid', userId)
 
   try {
     const data = await db.query("SELECT * FROM orders WHERE user_id = $1", [
       userId,
     ]);
-    console.log(data.rows);
     if (data.rows.length === 0) {
       return NextResponse.json({ message: "No Orders Found", data: data.rows },
       { status: 200 });
