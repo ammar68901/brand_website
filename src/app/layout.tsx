@@ -10,6 +10,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import ClerkProviderClient from '@/components/ClerkProviderClient';
 import { Toaster } from "react-hot-toast";
 import { UserProvider } from "@/context/userContext";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 
 const poppins = Poppins({
@@ -37,6 +38,7 @@ export default function RootLayout({
               <TopBar />
               <Navbar />
               {children}
+              <WhatsAppButton/>
               <Toaster/>
               <Footer />
             </CartProvider>
