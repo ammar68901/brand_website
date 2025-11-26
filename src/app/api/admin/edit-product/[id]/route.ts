@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { parse } from 'cookie';
 import db from '@/lib/db';
 import { v2 as cloudinary } from 'cloudinary';
+import { verifyToken } from '@/lib/auth';
 
 // Cloudinary configure karein
 cloudinary.config({
@@ -18,8 +19,12 @@ async function validateAdmin() {
   if (!sessionToken) return false;
 
   try {
-    const [adminId] = Buffer.from(sessionToken, 'base64').toString().split(':');
-    const result = await db.query('SELECT id FROM admin WHERE id = $1', [adminId]);
+    // const [adminId] = Buffer.from(sessionToken, 'base64').toString().split(':');
+
+    const validateAdminPayload = await verifyToken(sessionToken);
+    const adminEmail = validateAdminPayload?.email;
+    if (!adminEmail) return false;
+    const result = await db.query('SELECT id FROM admin WHERE email = $1', [adminEmail]);
     return result.rows.length > 0;
   } catch {
     return false;
