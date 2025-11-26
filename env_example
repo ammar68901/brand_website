@@ -1,0 +1,12 @@
+POSTGREESQL_URI='Your database connection string here'
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY='not needed for now'
+# CLERK_SECRET_KEY='not needed for now'
+# NEXT_SERVER_ACTIONS_ENCRYPTION_KEY='not needed for now'
+
+
+CLOUDINARY_CLOUD_NAME='cloudnamehere'
+CLOUDINARY_API_KEY='cloudinaryapikeyhere'
+CLOUDINARY_API_SECRET='cloudinaryapisecrethere'
+
+
+JWT_SECRET= 'jwt secret here'

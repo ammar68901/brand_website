@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import axios from "axios";
-import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type Product = {
   id: number; // number, kyunki DB se number aata hai
@@ -21,13 +21,12 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/perfumes");
+        const res = await axios.get("/api/perfumes");
         const data: Product[] = res.data; //  Type-safe
-        console.log("Fetched products:", data);
+        
         setProducts(data); //  State update
-        //  `products` abhi update nahi hua — isliye yahan log mat karein
       } catch (e: any) {
-        console.error("Error fetching products:", e);
+        toast.error("Error fetching products", e.message);
       }
     };
     fetchAllProducts();

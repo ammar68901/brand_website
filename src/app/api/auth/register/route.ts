@@ -2,11 +2,12 @@ import { NextRequest } from "next/server";
 import { hash } from "bcrypt";
 import db from "@/lib/db";
 import  {v4 as uuidv4} from 'uuid'
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, phoneNumber } = await request.json();
-    console.log(email, password, phoneNumber);
-    if (!email || !password || !phoneNumber) {
+    const { email, password, phoneNumber , username} = await request.json();
+    if (!email || !password || !phoneNumber || !username) {
       return new Response(
         JSON.stringify({ error: "Email and password required" }),
         { status: 400 }
@@ -23,6 +24,12 @@ export async function POST(request: NextRequest) {
         JSON.stringify({
           error: "Please provide valid email and phone number",
         }),
+        { status: 400 }
+      );
+    }
+    if (username.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Please provide a valid username" }),
         { status: 400 }
       );
     }
@@ -51,9 +58,21 @@ export async function POST(request: NextRequest) {
 
     const id = uuidv4()
     await db.query(
-      "INSERT INTO users (id ,email, password_hash, phonenumber) VALUES ($1, $2, $3, $4)",
-      [id,email, passwordHash, phonenumber]
+      "INSERT INTO users (id ,email, password_hash, phonenumber, username) VALUES ($1, $2, $3, $4, $5)",
+      [id,email, passwordHash, phonenumber, username]
     );
+
+    // Create JWT token
+    const token = jwt.sign({ userId:id, email }, process.env.JWT_SECRET!, {
+      expiresIn: "7d",
+    });
+
+    (await cookies()).set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
 
     return new Response(JSON.stringify({ success: true }), {
       status: 201,

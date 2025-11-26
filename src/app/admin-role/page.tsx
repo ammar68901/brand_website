@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 export default function AdminPage() {
 
 
@@ -12,24 +13,20 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchCounts = async () => {
       try{
-        const res = await axios.get("http://localhost:3000/api/admin/countusers");
-        console.log("User count response:", res.data);
+        const res = await axios.get("/api/admin/countusers");
         setUserCount(res.data.total_users || 0)
-        console.log('try')
       }catch(e:any){
-        console.log('error',e)
+        toast.error("Failed to fetch user count", e.message);
       }
     }
 
     const fetchOrderProductCounts = async () => {
       try{
-        const res = await axios.get("http://localhost:3000/api/admin/orders-product-count");
-        console.log("Order and Product count response:", res.data);
+        const res = await axios.get("/api/admin/orders-product-count");
         setOrderCount(res.data.total_orders || 0)
         setProductCount(res.data.total_products || 0)
-        console.log('try')
       }catch(e:any){
-        console.log('error',e)
+        toast.error("Failed to fetch order and product counts", e.message);
       }
     }
 

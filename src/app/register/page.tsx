@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [userName, setUsername] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -19,16 +20,23 @@ export default function RegisterPage() {
     setError("");
 
     try {
+<<<<<<< HEAD
       setIsLoading(true);
       const res = await axios.post("http://localhost:3000/api/auth/register", {
+=======
+      setIsloading(true);
+      const res = await axios.post("/api/auth/register", {
+>>>>>>> d74d5f0e53a521b361805a3d74af738e5440f646
         email,
         password,
         phoneNumber,
+        username: userName,
       });
 
       if (res.status === 201) {
         toast.success("Registration successful!");
-        router.push("/login");
+        router.push("/");
+        window.location.reload();
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || "Registration failed";
@@ -40,6 +48,7 @@ export default function RegisterPage() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white shadow-md rounded-xl p-8 sm:p-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Register</h1>
@@ -94,6 +103,65 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
+=======
+    <div className="max-w-md mx-auto p-6 mt-10">
+      <h1 className="text-2xl font-bold mb-6">Register</h1>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="Phone Number"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="text"
+          value={userName}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="w-full p-2 border rounded"
+          required
+        />
+        {isLoading ? (
+          <>
+            <button className="w-full bg-black  p-2 rounded flex items-center justify-center gap-3 text-zinc-400">
+              Register{" "}
+              <LoaderIcon width={30} height={30} className="animate-spin text-zinc-400" />
+            </button>
+          </>
+        ) : (   
+          <>
+            <button
+              type="submit"
+              className="w-full bg-black text-white p-2 rounded"
+            >
+              Register
+            </button>
+          </>
+        )}
+      </form>
+      <p className="mt-4">
+        Do you have an account? <Link href={"/login"}>Login</Link>
+      </p>
+>>>>>>> d74d5f0e53a521b361805a3d74af738e5440f646
     </div>
   );
 }

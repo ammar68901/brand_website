@@ -34,14 +34,12 @@ export async function PUT(
 ) {
   // 🔐 1. Admin check
   const isAdmin = await validateAdmin();
-  console.log('Is admin:');
   if (!isAdmin) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
     
     try {
         const id = parseInt((await params).id, 10);
-        console.log('Id:' , id);
     if (isNaN(id)) {
       return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
     }

@@ -15,7 +15,6 @@ const deliverySchema = z.object({
 // Main handler
 export async function POST(request: NextRequest) {
    const token = request.cookies.get('token')?.value;
-    console.log(token)
     if (!token) {
       return new Response('Unauthorized', { status: 401 });
     }

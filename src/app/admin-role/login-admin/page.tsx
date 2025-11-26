@@ -23,8 +23,6 @@ export default function AdminLoginPage() {
         }),
       });
 
-      console.log("Response status:", res.status);
-      console.log(res)
       if(res.ok && res.status === 200){
         router.push("/admin-role");
         toast.success("Login Successful admin");
@@ -33,7 +31,7 @@ export default function AdminLoginPage() {
 
       }
     } catch (error:any) {
-      console.log(error);
+      // Error handling
     }
   };
 

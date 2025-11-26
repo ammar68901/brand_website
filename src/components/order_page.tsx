@@ -40,10 +40,8 @@ export default function MyOrdersPage() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/my-order"); //  updated endpoint
-      console.log("API response:", res.data.data);
       // const transformed = res.data.data.map(transformOrder);
       setOrders(res.data.data);
-      console.log("Fetched orders:", res.data.data, "setOrders called", orders);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
     } finally {

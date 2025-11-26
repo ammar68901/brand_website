@@ -25,11 +25,8 @@ function discountPercent(price?: number, compareAt?: number) {
 //   const get_perfume_data = async() => {
 //     try{
 //       const response = await axios.get(`http://localhost:3001/api/perfumes/`);
-//       console.log("Perfume data:", response.data);
 //       setPerfumeData(response.data);  
-//       console.log("Perfume data state:", perfumeData);
 //     }catch(error){
-//       console.log("Error fetching perfume data:", error);
 //     }
 //   }
 
@@ -133,12 +130,9 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
   const get_perfume_data = async() => {
     try{
       const response = await axios.get(`http://localhost:3000/api/perfumes/`);
-      console.log("Perfume data:", response.data);
       setPerfumeData(response.data);  
-      console.log("Perfume data state:", perfumeData);
     }catch(error){
       setIsLoading(false);
-      console.log("Error fetching perfume data:", error);
     }finally{
       setIsLoading(false);
     }
