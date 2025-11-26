@@ -10,3 +10,4 @@ CLOUDINARY_API_SECRET='cloudinaryapisecrethere'
 
 
 JWT_SECRET= 'jwt secret here'
+ADMIN_JWT_SECRET= "your admin secret"
