@@ -15,8 +15,8 @@ export default function AdminPage() {
       try{
         const res = await axios.get("/api/admin/countusers");
         setUserCount(res.data.total_users || 0)
-      }catch(e:any){
-        toast.error("Failed to fetch user count", e.message);
+      }catch(e: unknown){
+        toast.error("Failed to fetch user count");
       }
     }
 
