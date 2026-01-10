@@ -13,9 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);  
-  const {setEmailUser} = useUser()
-  
-
+  const { setEmailUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,21 +22,12 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // dynamic import so you don't need to add top-level imports
-      const [{ default: axios }, { toast }] = await Promise.all([
-        import('axios'),
-        import('react-hot-toast'),
-      ]);
-
-      // use relative API path in Next.js
-      let res = await axios.post('/api/auth/login', { email, password });
-
-      // success feedback + navigate
+      const res = await axios.post('/api/auth/login', { email, password });
       toast.success('Logged in successfully');
       router.back();
       // window.location.reload();
+
     } catch (err: any) {
-      const { toast } = await import('react-hot-toast');
       let message = 'Login failed';
       if (err?.response?.data) {
         message = err.response?.data?.error || JSON.stringify(err.response.data);
@@ -52,55 +41,62 @@ export default function LoginPage() {
     }
   };
 
-    useEffect(()=> {
-    const fetchUserDetail = async ()=> {
+  useEffect(() => {
+    const fetchUserDetail = async () => {
       try {
         const res = await axios.get('/api/me')
         setEmailUser(res.data.email)
       } catch (error: any) {
         toast.error("error",error.message)
       }
-    }
-
-    fetchUserDetail()
-  },[handleSubmit])
-
+    };
+    fetchUserDetail();
+  }, [handleSubmit]);
 
   return (
-    <div className="max-w-md mx-auto p-6 mt-10">
-      <h1 className="text-2xl font-bold mb-6">Login</h1>
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="w-full p-2 border rounded"
-          required
-        />
-        {isLoading ? (<>
-         <button disabled  className="flex items-center justify-center gap-6 text-zinc-300 w-full bg-black  p-2 rounded">
-          Login <Loader width={20} height={20} className='text-zinc-300 animate-spin'/>
-        </button>
-        </>):(<>
-         <button type="submit" className="w-full bg-black text-white p-2 rounded">
-          Login
-        </button>
-        </>)}
-       
-      </form>
-      <p className="mt-4">
-        Don't have an account?  <Link href={'/register'}>Register</Link>
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md bg-white shadow-md rounded-xl p-8 sm:p-10">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Login</h1>
+        {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full flex items-center justify-center gap-3 p-3 rounded-lg font-semibold transition 
+              ${isLoading ? 'bg-gray-300 cursor-not-allowed text-gray-700' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+          >
+            {isLoading ? <>Logging in <Loader className="animate-spin" size={20} /></> : 'Login'}
+          </button>
+        </form>
+        <p className="mt-6 text-center text-gray-700">
+          Don't have an account?{' '}
+          <Link href="/register" className="text-gray-900 font-medium hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -36,6 +36,7 @@ export default function RootLayout({
               <TopBar />
               <Navbar />
               {children}
+              <WhatsAppButton/>
               <Toaster/>
               <Footer />
             </CartProvider>
