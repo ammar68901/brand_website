@@ -13,6 +13,7 @@ export async function verifyToken(token: string) {
     return payload; 
   } catch (error) {
     // 4. If token is expired or invalid, throw error
+    console.log(error)
     return null;
   }
 }

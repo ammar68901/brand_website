@@ -13,15 +13,15 @@ export default function NewProductPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newProduct = {
-      id: Date.now().toString(), // abhi dummy ID
-      title,
-      price,
-      inStock,
-    };
+    // const newProduct = {
+    //   id: Date.now().toString(), // abhi dummy ID
+    //   title,
+    //   price,
+    //   inStock,
+    // };
 
     // Future mein yeh backend par save hoga
-    alert("✅ Product added successfully!");
+    alert("Product added successfully!");
 
     router.push("/admin/products"); // form submit ke baad list par redirect
   };

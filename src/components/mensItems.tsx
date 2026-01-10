@@ -1,14 +1,14 @@
 // src/app/men/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { ShoppingCart, Heart, Star, Clock } from "lucide-react";
+import { useCart } from "@/context/CartContext"; // ✅ Cart context
+import { useSidebar } from "@/context/SidebarContext"; // ✅ Sidebar context
+import { Product } from "@/data/mainProducts";
+import axios from "axios";
+import { Heart, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/context/CartContext";        // ✅ Cart context
-import { useSidebar } from "@/context/SidebarContext";  // ✅ Sidebar context
-import axios from "axios";
-import { Product } from "@/data/mainProducts";
+import { useEffect, useState } from "react";
 import { ProductAnimationLoading } from "./Perfume_loading_Animation";
 
 
@@ -16,11 +16,11 @@ function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
 }
 
-function discountPercent(price?: number, compareAt?: number) {
-  if (!price || !compareAt || compareAt <= price) return null;
-  const pct = Math.round(((compareAt - price) / compareAt) * 100);
-  return `-${pct}%`;
-}
+// function discountPercent(price?: number, compareAt?: number) {
+//   if (!price || !compareAt || compareAt <= price) return null;
+//   const pct = Math.round(((compareAt - price) / compareAt) * 100);
+//   return `-${pct}%`;
+// }
 
 function ProductCard({ product }: { product: Product }) {
   const [isWishlisted, setWishlisted] = useState(false);

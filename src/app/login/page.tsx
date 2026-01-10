@@ -31,12 +31,12 @@ export default function LoginPage() {
       ]);
 
       // use relative API path in Next.js
-      const res = await axios.post('/api/auth/login', { email, password });
+      let res = await axios.post('/api/auth/login', { email, password });
 
       // success feedback + navigate
       toast.success('Logged in successfully');
       router.back();
-      window.location.reload();
+      // window.location.reload();
     } catch (err: any) {
       const { toast } = await import('react-hot-toast');
       let message = 'Login failed';
@@ -55,9 +55,9 @@ export default function LoginPage() {
     useEffect(()=> {
     const fetchUserDetail = async ()=> {
       try {
-        const res = await axios.get('http://localhost:3000/api/me')
+        const res = await axios.get('/api/me')
         setEmailUser(res.data.email)
-      } catch (error:any) {
+      } catch (error: any) {
         toast.error("error",error.message)
       }
     }

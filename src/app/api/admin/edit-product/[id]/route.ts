@@ -1,26 +1,23 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { parse } from 'cookie';
 import db from '@/lib/db';
 import { v2 as cloudinary } from 'cloudinary';
 import { verifyToken } from '@/lib/auth';
 
-// Cloudinary configure karein
+// Cloudinary config (Same as before)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Admin session validate karein
+// Admin validation (Same as before)
 async function validateAdmin() {
-  const cookieStore = cookies();
-  const sessionToken = (await cookieStore).get('admin_session')?.value;
+  const cookieStore = await cookies(); // Note: cookies() is also a promise in Next.js 15
+  const sessionToken = cookieStore.get('admin_session')?.value;
   if (!sessionToken) return false;
 
   try {
-    // const [adminId] = Buffer.from(sessionToken, 'base64').toString().split(':');
-
     const validateAdminPayload = await verifyToken(sessionToken);
     const adminEmail = validateAdminPayload?.email;
     if (!adminEmail) return false;
@@ -35,16 +32,20 @@ export const runtime = 'nodejs';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  // 🛠️ FIX 1: Type 'params' as a Promise
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // 🔐 1. Admin check
   const isAdmin = await validateAdmin();
   if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-    }
-    
-    try {
-        const id = parseInt((await params).id, 10);
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
+  try {
+    // 🛠️ FIX 2: Await the params object to get the ID
+    const { id: rawId } = await params;
+    const id = parseInt(rawId, 10);
+
     if (isNaN(id)) {
       return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
     }
@@ -65,8 +66,8 @@ export async function PUT(
       return new Response(JSON.stringify({ error: 'Missing or invalid fields' }), { status: 400 });
     }
 
-    // 📤 3. Agar image upload hui hai → Cloudinary pe bhejo
-    let imageUrl = formData.get('imageUrl') as string; // existing URL (agar nayi image nahi hai)
+    // 📤 3. Cloudinary Upload
+    let imageUrl = formData.get('imageUrl') as string; 
     const file = formData.get('image') as File | null;
 
     if (file && file.size > 0) {
@@ -79,10 +80,10 @@ export async function PUT(
           )
           .end(buffer);
       });
-      imageUrl = (result as any).secure_url;
+      imageUrl = (result as unknown as { secure_url: string }).secure_url;
     }
 
-    // 💾 4. DB update karein
+    // 💾 4. DB update
     await db.query(
       `UPDATE perfumes 
        SET name = $1, brand = $2, category = $3, price = $4, 

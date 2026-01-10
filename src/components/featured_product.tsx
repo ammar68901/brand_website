@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ShoppingCart, Heart, Star, Clock } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import axios from "axios";
-import { mainProducts, Product } from "@/data/mainProducts";
 import { useCart } from "@/context/CartContext";
 import { useSidebar } from "@/context/SidebarContext";
+import { Product } from "@/data/mainProducts";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { Heart, ShoppingCart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import Perfume_loading_Animation from "./Perfume_loading_Animation";
 
 function formatPKR(value: number) {
@@ -125,13 +125,14 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function ProductGrid() {
-const [perfumeData, setPerfumeData] = useState<Product[]|any>([]);
+const [perfumeData, setPerfumeData] = useState<Product[]>([]);
 const [isLoading, setIsLoading] = useState<boolean>(true);
   const get_perfume_data = async() => {
     try{
-      const response = await axios.get(`http://localhost:3000/api/perfumes/`);
+      const response = await axios.get(`/api/perfumes/`);
       setPerfumeData(response.data);  
     }catch(error){
+      console.log(error);
       setIsLoading(false);
     }finally{
       setIsLoading(false);

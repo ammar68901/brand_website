@@ -21,7 +21,7 @@ export default function EditProductPage() {
   // ✅ Load product data
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await fetch(`http://localhost:3000/api/perfume/${id}`);
+      const res = await fetch(`/api/perfume/${id}`);
       const data = await res.json();
       setName(data.name);
       setBrand(data.brand);
@@ -35,7 +35,7 @@ export default function EditProductPage() {
     if (id) fetchProduct();
   }, [id]);
 
-  // 🖼️ Image select → preview
+  // Image select → preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -44,7 +44,7 @@ export default function EditProductPage() {
     }
   };
 
-  // ✅ Form submit
+  //  Form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -62,7 +62,7 @@ export default function EditProductPage() {
       formData.append('image', fileInputRef.current.files[0]);
     }
 
-    const res = await fetch(`http://localhost:3000/api/admin/edit-product/${id}`, {
+    const res = await fetch(`/api/admin/edit-product/${id}`, {
       method: 'PUT',
       body: formData,
     });
