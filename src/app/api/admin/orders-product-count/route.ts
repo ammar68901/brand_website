@@ -3,7 +3,7 @@ import db from "@/lib/db";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export const GET = async (request: Request) => {
+export const GET = async () => {
   const cookieStore = cookies();
   const sessionToken = (await cookieStore).get("admin_session")?.value;
 

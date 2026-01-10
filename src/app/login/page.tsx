@@ -22,25 +22,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-<<<<<<< HEAD
-      const res = await axios.post('http://localhost:3000/api/auth/login', { email, password });
-      toast.success('Logged in successfully');
-      router.back();
-=======
-      // dynamic import so you don't need to add top-level imports
-      const [{ default: axios }, { toast }] = await Promise.all([
-        import('axios'),
-        import('react-hot-toast'),
-      ]);
-
-      // use relative API path in Next.js
       const res = await axios.post('/api/auth/login', { email, password });
-
-      // success feedback + navigate
       toast.success('Logged in successfully');
       router.back();
-      window.location.reload();
->>>>>>> d74d5f0e53a521b361805a3d74af738e5440f646
+      // window.location.reload();
+
     } catch (err: any) {
       let message = 'Login failed';
       if (err?.response?.data) {
@@ -58,10 +44,10 @@ export default function LoginPage() {
   useEffect(() => {
     const fetchUserDetail = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/me');
-        setEmailUser(res.data.email);
+        const res = await axios.get('/api/me')
+        setEmailUser(res.data.email)
       } catch (error: any) {
-        toast.error(error.message);
+        toast.error("error",error.message)
       }
     };
     fetchUserDetail();

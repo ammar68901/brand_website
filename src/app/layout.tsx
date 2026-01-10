@@ -1,16 +1,14 @@
 
-import type { Metadata } from "next";
-import "./globals.css";
-import TopBar from "@/components/Topbar";
 import Navbar from "@/components/Navbar";
+import TopBar from "@/components/Topbar";
 import Footer from "@/components/footer";
-import { Poppins } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { SidebarProvider } from "@/context/SidebarContext";
-import ClerkProviderClient from '@/components/ClerkProviderClient';
-import { Toaster } from "react-hot-toast";
 import { UserProvider } from "@/context/userContext";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+import "./globals.css";
 
 
 const poppins = Poppins({

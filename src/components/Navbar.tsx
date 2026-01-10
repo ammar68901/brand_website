@@ -31,7 +31,7 @@ export default function Navbar() {
           if (res.status === 404){
             router.push('/register')
           }
-        } catch (error:any) {
+        } catch (error: any) {
           toast.error("error",error.message)
         }
       }
@@ -41,12 +41,12 @@ export default function Navbar() {
   
     const handleLOgout = async()=> {
       try{
-        const res = await axios.post("/api/auth/logout")
+        let res = await axios.post("/api/auth/logout")
         toast.success("Logout Success")
         window.location.reload();
         clearCart();
-      }catch(e){
-        toast.error('something went wrong')
+      }catch(e:any){
+        toast.error("Logout failed", e)
       }
     }
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -69,7 +69,7 @@ export default function Navbar() {
           {/* Right side: Cart */}
           <div className="flex items-center justify-center gap-5">
             <button
-              onClick={() => setCartOpen(true)} // 👈 open sidebar
+              onClick={() => setCartOpen(true)} // open sidebar
               className="relative"
             >
               <ShoppingCart className="w-6 h-6 text-black hover:text-gray-600" />

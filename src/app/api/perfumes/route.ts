@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Build query
     let query = 'SELECT id, name, brand, price,stock, category, image_url FROM perfumes WHERE 1=1';
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (category) { 

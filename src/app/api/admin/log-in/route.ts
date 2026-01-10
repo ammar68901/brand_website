@@ -1,11 +1,9 @@
-import {compare} from 'bcrypt';
-import {serialize} from 'cookie';
-import {SignJWT} from 'jose'
 import db from '@/lib/db';
-import {NextResponse, NextRequest} from 'next/server';
-import jwt from 'jsonwebtoken';
-import {z} from "zod"
+import { compare } from 'bcrypt';
+import { SignJWT } from 'jose';
 import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 type AdminCred = {
     id : number
     email :string;
@@ -14,7 +12,7 @@ type AdminCred = {
 
 export async function POST(request:NextRequest) {
     try{
-        let {email, password}: AdminCred | any= await request.json()
+        let {email, password}: AdminCred|any  = await request.json()
         email = z.email({pattern: /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i}).parse(email)
         password = z.string().min(6).parse(password)
 

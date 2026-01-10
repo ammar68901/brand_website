@@ -25,8 +25,8 @@ export default function ProductsPage() {
         const data: Product[] = res.data; //  Type-safe
         
         setProducts(data); //  State update
-      } catch (e: any) {
-        toast.error("Error fetching products", e.message);
+      } catch (e: unknown) {
+        toast.error("Error fetching products");
       }
     };
     fetchAllProducts();

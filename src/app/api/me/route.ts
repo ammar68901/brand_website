@@ -13,6 +13,6 @@ export async function GET() {
     if (!user.rows[0]) return NextResponse.json({message:'User not found'}, { status: 404 });
     return Response.json({ email: user.rows[0].email });
   } catch (error) {
-    return NextResponse.json({message:'Invalid token login again'}, { status: 401 });
+    return NextResponse.json({message:'Invalid token login again',error}, { status: 401 });
   }
 } 

@@ -25,27 +25,27 @@ export async function GET() {
   }
 
   // 3. Agar admin valid hai → Clerk se user count fetch karein
-  try {
-    const res = await fetch('https://api.clerk.com/v1/users/count', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      next: { revalidate: 60 },
-    });
+  // try {
+  //   const res = await fetch('https://api.clerk.com/v1/users/count', {
+  //     method: 'GET',
+  //     headers: {
+  //       Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //     next: { revalidate: 60 },
+  //   });
 
-    if (!res.ok) {
-      throw new Error(`Clerk API responded with status ${res.status}`);
-    }
+  //   if (!res.ok) {
+  //     throw new Error(`Clerk API responded with status ${res.status}`);
+  //   }
 
-    const data = await res.json();
-    return NextResponse.json({ total_users: data.total_count });
-  } catch (error: any) {
-    console.error('Clerk user count error:', error.message || error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user count' },
-      { status: 500 }
-    );
-  }
+  //   const data = await res.json();
+  //   return NextResponse.json({ total_users: data.total_count });
+  // } catch (error: any) {
+  //   console.error('Clerk user count error:', error.message || error);
+  //   return NextResponse.json(
+  //     { error: 'Failed to fetch user count' },
+  //     { status: 500 }
+  //   );
+  // }
 }

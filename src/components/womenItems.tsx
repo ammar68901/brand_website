@@ -1,14 +1,14 @@
 // src/app/women/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { ShoppingCart, Heart, Star } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useSidebar } from "@/context/SidebarContext";
-import axios from "axios";
 import { Product } from "@/data/mainProducts";
+import axios from "axios";
+import { Heart, ShoppingCart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { ProductAnimationLoading } from "./Perfume_loading_Animation";
 
 
@@ -16,11 +16,11 @@ function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
 }
 
-function discountPercent(price?: number, compareAt?: number) {
-  if (!price || !compareAt || compareAt <= price) return null;
-  const pct = Math.round(((compareAt - price) / compareAt) * 100);
-  return `-${pct}%`;
-}
+// function discountPercent(price?: number, compareAt?: number) {
+//   if (!price || !compareAt || compareAt <= price) return null;
+//   const pct = Math.round(((compareAt - price) / compareAt) * 100);
+//   return `-${pct}%`;
+// }
 
 function ProductCard({ product }: { product: Product }) {
   const [isWishlisted, setWishlisted] = useState(false);
@@ -149,7 +149,7 @@ export default function WomenProducts() {
   useEffect(() => {
     const fetchMenProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/perfumes/", {
+        const response = await axios.get("/api/perfumes/", {
           params: { category: "female" },
         });
         setfemaleProductList(response.data);

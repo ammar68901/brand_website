@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import toast from "react-hot-toast";
 import { EyeClosed, EyeIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -12,7 +11,7 @@ export default function AdminLoginPage() {
   const [togglePass, setTogglePass] = useState(false);
   const adminLogin = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/admin/log-in", {
+      const res = await fetch("api/admin/log-in", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", //  Zaroori
@@ -27,10 +26,11 @@ export default function AdminLoginPage() {
         router.push("/admin-role");
         toast.success("Login Successful admin");
       }else{
-        toast.error(res.statusText as any || "Login failed" );
+        toast.error(res.statusText as unknown as string || "Login failed" );
 
       }
-    } catch (error:any) {
+    } catch (error: unknown) {
+      console.error("Login error:", error);
       // Error handling
     }
   };

@@ -39,7 +39,7 @@ export default function CheckoutPage() {
   const placedOrder = async () => {
   try {
     setIsloading(true);
-    const payload: any = {
+    const payload: { [key: string]: any } = {
       formData: {
         customer_name: formData.customer_name,
         address: formData.address,
@@ -58,7 +58,7 @@ export default function CheckoutPage() {
       };
     });
 
-    const response = await axios.post("http://localhost:3000/api/orders", payload);
+    const response = await axios.post("/api/orders", payload);
 
     toast.success("Order placed successfully!");
 
@@ -83,7 +83,7 @@ export default function CheckoutPage() {
 };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    placedOrder(); // ✅ Form submit ko directly call karein
+    placedOrder(); //  Form submit ko directly call karein
   };
 
   const totalPrice = cart.reduce(

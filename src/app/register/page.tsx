@@ -35,8 +35,8 @@ export default function RegisterPage() {
 
       if (res.status === 201) {
         toast.success("Registration successful!");
-        router.push("/");
-        window.location.reload();
+        router.back()
+        // window.location.reload();
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || "Registration failed";

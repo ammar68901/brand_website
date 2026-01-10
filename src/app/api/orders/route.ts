@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       userId = decoded.userId;
       
     } catch (error) {
-      return new Response('Unauthorized', { status: 401 });
+      return NextResponse.json({message:'Unauthorized', error}, { status: 401 });
     }
     if (!userId) {
       return NextResponse.json({ message: "Please Login" }, { status: 400 });
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         ]
       );
     } 
-    let updateStock: { id: number; stock: number }[] = [];
+    const updateStock: { id: number; stock: number }[] = [];
 
     for (const item of items) {
       const res = await db.query(
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify({ error: 'Validation failed', details: error }), { status: 400 });
     }

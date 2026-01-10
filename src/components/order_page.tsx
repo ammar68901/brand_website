@@ -14,6 +14,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ProductAnimationLoading } from "./Perfume_loading_Animation";
 import Link from "next/link";
+import { Product } from "@/data/mainProducts";
 // Adjusted type to match real API
 type Order = {
   id: number;
@@ -32,14 +33,14 @@ type Order = {
 };
 
 export default function MyOrdersPage() {
-  const [orders, setOrders] = useState<any[]>([{}]);
+  const [orders, setOrders] = useState<Order[]>([{} as Order]);
   const [loading, setLoading] = useState(true);
-  const [perfumeDetail, setPerfumeDetail] = useState<any>(null);
+  const [perfumeDetail, setPerfumeDetail] = useState<Product | null>(null);
   const [perfumeId, setPerfumeId] = useState<number | null>(null);
   const [OrderDetailLoading, setOrderDetailLoading] = useState(true);
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/my-order"); //  updated endpoint
+      const res = await axios.get("/api/my-order"); //  updated endpoint
       // const transformed = res.data.data.map(transformOrder);
       setOrders(res.data.data);
     } catch (error) {
@@ -53,7 +54,7 @@ export default function MyOrdersPage() {
     try {
       if (perfumeId) {
         const response = await axios.get(
-          `http://localhost:3000/api/perfume/${perfumeId}`
+          `/api/perfume/${perfumeId}`
         );
         const perfume = response.data;
         setPerfumeDetail(perfume);
@@ -251,7 +252,7 @@ export default function MyOrdersPage() {
                   <>
                     <Dialog>
                       <DialogTrigger
-                        onClick={() => setPerfumeId(order?.perfume_id)}
+                        onClick={() => setPerfumeId(order?.id)}
                       >
                         Product Details
                       </DialogTrigger>

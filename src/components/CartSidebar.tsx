@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useCart } from "@/context/CartContext";
+import { CartItem, useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 
 type CartSidebarProps = {
@@ -68,7 +68,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           {cart.length === 0 ? (
             <p className="text-gray-500 text-center mt-10">Your cart is empty.</p>
           ) : (
-            cart.map((item:any,i) => (
+            cart.map((item: CartItem, i) => (
               <div
                 key={i}
                 className="flex items-center justify-between border-b pb-3"

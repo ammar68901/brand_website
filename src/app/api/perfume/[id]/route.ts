@@ -4,17 +4,19 @@ import db from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest, // 👈 FIX: First argument must be the Request
+  { params }: { params: Promise<{ id: string }> } // 👈 Second argument is Context
 ) {
   try {
-    const perfume_id = parseInt((await params).id, 10);
+    const { id: rawId } = await params;
+    const perfume_id = parseInt(rawId, 10);
+
     if (isNaN(perfume_id)) {
       return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
     }
 
     const result = await db.query(
-      `SELECT id, name, brand, price, category, description,stock, image_url, created_at
+      `SELECT id, name, brand, price, category, description, stock, image_url, created_at
        FROM perfumes WHERE id = $1`,
       [perfume_id]
     );
@@ -27,7 +29,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 's-maxage=3600, stale-while-revalidate=86400', // Cache 1h on edge
+        'Cache-Control': 's-maxage=3600, stale-while-revalidate=86400',
       },
     });
   } catch (error) {
