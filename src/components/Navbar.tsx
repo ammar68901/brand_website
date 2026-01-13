@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 import CartSidebar from "./CartSidebar"; // 
 import ShopDropdown from "./shopbtnInNav";
 import { Button } from "./ui/button";
+import Image from "next/image";
+
 export default function Navbar() {
 
   const router = useRouter()
@@ -52,7 +54,8 @@ export default function Navbar() {
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   // console.log(user)
   return (
-    <nav className="w-full border-b border-gray-200 bg-white shadow-sm relative z-50">
+    <nav className="w-full border-b border-gray-200 bg-white shadow-sm fixed top-[36px] left-0 z-[50]">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navbar */}
         <div className="hidden md:flex items-center justify-between h-16">
@@ -64,7 +67,18 @@ export default function Navbar() {
           </div>
 
           {/* Center: Logo */}
-          <div className="text-5xl font-bold text-black"><Link href={'/'}>Hevina&apos;s</Link></div>
+          <div className="">
+                   <Link href={'/'}>
+                     <Image 
+                       src="/logo.jpeg"   // apni logo image path yahan
+                       alt="Khanum Logo"
+                       width={180}             // width adjust karo
+                       height={60}             // height adjust karo
+                       className="object-contain"
+                     />
+                   </Link>
+</div>
+
 
           {/* Right side: Cart */}
           <div className="flex items-center justify-center gap-5">
@@ -110,7 +124,18 @@ export default function Navbar() {
           </button>
 
           {/* Logo */}
-          <div className="text-4xl font-bold text-black">Hevina&apos;s</div>
+          <div className="">
+         <Link href={'/'}>
+              <Image 
+                  src="/logo.jpeg"   // apni logo image path yahan
+                  alt="Khanum Logo"
+                  width={180}             // width adjust karo
+                  height={60}             // height adjust karo
+                  className="object-contain"
+                />
+              </Link>
+</div>
+
 
           {/* Search + Cart */}
           <div className="flex items-center space-x-4">
@@ -185,8 +210,8 @@ export default function Navbar() {
           <div>
             <p className="mb-2">Contact</p>
             <div className="flex flex-col text-sm gap-1">
-              <a href="mailto:abc@gmail.com" className="hover:underline">abc@gmail.com</a>
-              <a href="tel:+1234567890" className="hover:underline">+123 456 7890</a>
+              <a href="mailto:abc@gmail.com" className="hover:underline">khanumfragrance@gmail.com</a>
+              <a href="tel:+1234567890" className="hover:underline">+92 309 9857806</a>
             </div>
           </div>
         </nav>

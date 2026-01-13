@@ -9,17 +9,17 @@ import Image from "next/image";
 export default function HeroSlider() {
   const slides = [
     {
-      src: "/images3.jpeg",
+      src: "/front1.jpeg",
       title: "Luxury Perfumes",
       desc: "Discover timeless fragrances crafted for elegance & charm.",
     },
     {
-      src: "/image2.jpeg",
+      src: "/front2.jpeg",
       title: "New Arrivals",
       desc: "Fresh scents to inspire confidence every day.",
     },
     {
-      src: "/image1.jpg",
+      src: "/front3.jpeg",
       title: "Exclusive Collection",
       desc: "Experience rare fragrances that define your personality.",
     },

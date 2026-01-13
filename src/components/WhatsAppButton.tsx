@@ -2,7 +2,7 @@
 import React from "react";
 
 export default function WhatsAppButton(props: any) {
-  const phone = props.phone || "923153732689";
+  const phone = props.phone || "923099857806";
   const size = props.size || 60;
 
   function openWhatsApp() {

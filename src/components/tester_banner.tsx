@@ -14,7 +14,7 @@ export default function PerfumeBanner() {
       className="relative w-full h-[250px] md:h-[300px] overflow-hidden"
     >
       <Image
-        src="/images3.jpeg"
+        src="/aboutpic.jpeg"
         alt="Perfume Bundle"
         fill
         className="object-cover"

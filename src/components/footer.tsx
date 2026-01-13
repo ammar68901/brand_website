@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         {/* Brand Name */}
         <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">Hevina&apos;s</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Khanum</h2>
           <p className="text-gray-400 text-sm mt-1">
             Luxury Fragrance • Premium Quality
           </p>
@@ -39,10 +39,10 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-3">Get in Touch</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li className="flex justify-center sm:justify-start items-center gap-2">
-                <MdEmail size={16} /> support@perfumex.com
+                <MdEmail size={16} /> khanumfragrance@gmail.com
               </li>
               <li className="flex justify-center sm:justify-start items-center gap-2">
-                <MdPhone size={16} /> +92 300 1234567
+                <MdPhone size={16} /> +92 309 9857806
               </li>
             </ul>
           </div>
@@ -51,11 +51,11 @@ export default function Footer() {
         {/* Social Media */}
         <div className="flex justify-center sm:justify-between items-center mt-10 flex-wrap gap-4">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Hevina&apos;s. All Rights Reserved.
+            © {new Date().getFullYear()} Khanum. All Rights Reserved.
           </p>
           <div className="flex gap-4">
+            <a href="https://www.instagram.com/khanumfragrance?igsh=OXJqZGxqazYyZDd5" className="hover:text-gray-300"><SiInstagram size={18} /></a>
             <a href="#" className="hover:text-gray-300"><SiFacebook size={18} /></a>
-            <a href="#" className="hover:text-gray-300"><SiInstagram size={18} /></a>
             
           </div>
         </div>

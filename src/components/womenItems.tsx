@@ -177,7 +177,7 @@ export default function WomenProducts() {
 
         {/* Heading */}
         <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
-          Women&apos;s Products
+          Women Perfumes
         </h2>
 
         {/* Product Grid */}

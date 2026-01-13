@@ -112,7 +112,7 @@ export default function CheckoutPage() {
                   value={formData.customer_name}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                  className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm px-4 py-4"
                 />
               </div>
 
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                  className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm px-4 py-4"
                 />
               </div>
 
@@ -141,7 +141,7 @@ export default function CheckoutPage() {
                     value={formData.city}
                     onChange={handleChange}
                     required
-                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm px-4 py-4"
                   />
                 </div>
                 <div>
@@ -154,12 +154,12 @@ export default function CheckoutPage() {
                     value={formData.postalCode}
                     onChange={handleChange}
                     required
-                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm px-4 py-4"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Postal Code
+                    Phone number
                   </label>
                   <input
                     type="number"
@@ -167,7 +167,7 @@ export default function CheckoutPage() {
                     value={formData.number}
                     onChange={handleChange}
                     required
-                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm"
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm px-4 py-4"
                   />
                 </div>
               </div>

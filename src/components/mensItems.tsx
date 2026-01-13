@@ -179,7 +179,7 @@ export default function MenProductsPage() {
 
         {/* Heading */}
         <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
-          Men&apos;s Products
+          Men Perfumes
         </h2>
 
         {/* Grid */}

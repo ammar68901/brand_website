@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ProductAnimationLoading } from "./Perfume_loading_Animation";
+import Link from "next/link";
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -41,13 +42,23 @@ export default function ProductDetail() {
   }
 
   return (
+    
+    
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="min-h-screen bg-white text-black px-4 sm:px-6 py-10"
     >
+      {/* Breadcrumb */}
+        <p className="text-sm text-gray-500 mb-4">
+          <Link href="/">Home</Link> /{" "}
+          <span className="font-semibold text-black">Product_detail</span>
+        </p>
+      
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center md:items-start">
+        
+        
         {/* Left: Image */}
         <div className="relative w-full flex justify-center">
           <div className="relative w-[85%] h-[350px] overflow=-hidden rounded-2xl shadow-md border bg-gray-50">
@@ -189,6 +200,17 @@ export default function ProductDetail() {
                   quantity: 1,
                   image: product?.image_url,
                 });
+                  toast.success("Added to cart successfully 🛒", {
+    style: {
+      borderRadius: "12px",
+      background: "#000",
+      color: "#fff",
+    },
+    iconTheme: {
+      primary: "#fff",
+      secondary: "#000",
+    },
+  });
                 }}
             >
               <ShoppingCart size={18} 

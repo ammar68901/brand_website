@@ -13,7 +13,7 @@ export default function ResponsiveFAQNoScroll() {
 
   const faqItems: FAQItem[] = [
     {
-      question: "What makes Hevina's perfumes unique?",
+      question: "What makes Khanum perfumes unique?",
       answer:
         "Our perfumes are Extrait de Parfum, which means they have a 30% to 40% oil concentration, making them stronger, richer, and longer-lasting than regular perfumes.",
     },
@@ -22,14 +22,15 @@ export default function ResponsiveFAQNoScroll() {
       answer:
         "On average, a bottle can last up to 2 years if stored properly in a cool, dry place.",
     },
-    {
-      question: "Are your perfumes cruelty-free?",
-      answer: "Yes! All our perfumes are completely cruelty-free and not tested on animals.",
-    },
-    {
-      question: "Do you ship internationally?",
-      answer: "Yes, we ship worldwide with secure packaging to ensure safe delivery.",
-    },
+   {
+  question: "Is your perfume skin-safe?",
+  answer: "Yes! Our perfume is completely skin-safe because we use high-quality ethanol.",
+},
+{
+  question: "How long does your perfume last?",
+  answer: "Our perfume lasts for up to 8 hours.",
+},
+
   ];
 
   const toggle = (index: number) => {

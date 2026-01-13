@@ -25,8 +25,8 @@ export default function ContactPage() {
         {/* Left side: Image */}
         <div className="relative w-full h-80 md:h-[500px] rounded-2xl overflow-hidden shadow-md">
           <Image
-            src="/contact-image.jpg" // apni image ka path dal do
-            alt="Contact Hevina's"
+            src="/aboutpic.jpeg" // apni image ka path dal do
+            alt="Khanum"
             fill
             className="object-cover"
           />
@@ -42,9 +42,9 @@ export default function ContactPage() {
 
           {/* Contact details */}
           <div className="space-y-3 text-sm sm:text-base">
-            <p><span className="font-semibold">📍 Address:</span> Lahore, Pakistan</p>
-            <p><span className="font-semibold">📞 Phone:</span> +92 300 1234567</p>
-            <p><span className="font-semibold">✉️ Email:</span> support@hevinas.com</p>
+            <p><span className="font-semibold">📍 Address:</span> Karachi, Pakistan</p>
+            <p><span className="font-semibold">📞 Phone:</span> +92 309 9857806</p>
+            <p><span className="font-semibold">✉️ Email:</span> khanumfragrance@gmail.com</p>
           </div>
 
          

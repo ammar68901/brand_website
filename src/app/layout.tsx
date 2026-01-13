@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 
 const poppins = Poppins({
@@ -17,7 +18,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Hevina's Perfume",
+  title: "Khanum fragrance",
   description: "Long-lasting perfumes at reasonable prices",
 };
 
@@ -35,7 +36,9 @@ export default function RootLayout({
             <CartProvider>
               <TopBar />
               <Navbar />
+              <main className="pt-[100px]">
               {children}
+              </main>
               <WhatsAppButton/>
               <Toaster/>
               <Footer />

@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Perfume_loading_Animation from "./Perfume_loading_Animation";
+import { toast } from "react-hot-toast";
 
 function formatPKR(value: number) {
   return `Rs. ${value.toLocaleString()}`;
@@ -52,6 +53,19 @@ function ProductCard({ product }: { product: Product }) {
       image: product.image_url,
     });
     setSidebarOpen(true); // open sidebar
+    toast.success("Added to cart successfully 🛒", {
+  style: {
+    background: "#000",
+    color: "#fff",
+    borderRadius: "12px",
+    padding: "12px 16px",
+  },
+  iconTheme: {
+    primary: "#fff",
+    secondary: "#000",
+  },
+});
+
   };
 
   return (
@@ -103,6 +117,7 @@ function ProductCard({ product }: { product: Product }) {
             <button
               className="flex-1 flex items-center justify-center gap-1 rounded-lg bg-black px-2 py-1.5 text-xs font-semibold text-white hover:bg-gray-800"
               onClick={handleAddToCart}
+              
             >
               <ShoppingCart size={14} /> Add
             </button>

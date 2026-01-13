@@ -22,7 +22,7 @@ export default function AboutPage() {
 
         {/* Heading */}
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-8">
-          About <span className="text-gray-700">Hevina&apos;s</span>
+          About <span className="text-gray-700">Khanum</span>
         </h1>
 
         {/* Intro section with image + text */}
@@ -31,7 +31,7 @@ export default function AboutPage() {
           <div>
             <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              At <span className="font-semibold">Hevina’s</span>, our goal is
+              At <span className="font-semibold">Khanum</span>, our goal is
               simple yet timeless — to bring you{" "}
               <span className="font-medium">long-lasting fragrances</span> that
               not only elevate your presence but also remain{" "}
@@ -42,7 +42,7 @@ export default function AboutPage() {
             </p>
             <p className="text-gray-600 leading-relaxed">
               We believe that luxury shouldn’t be out of reach. With
-              Hevina’s, you don’t just wear a scent —{" "}
+              Khanum, you don’t just wear a scent —{" "}
               <span className="italic">you wear a statement.</span>
             </p>
           </div>
@@ -50,8 +50,8 @@ export default function AboutPage() {
           {/* Image */}
           <div className="relative w-full h-80 md:h-[450px] rounded-2xl overflow-hidden shadow-lg">
             <Image
-              src="/images3.jpeg" 
-              alt="Hevina’s Perfume"
+              src="/aboutpic.jpeg" 
+              alt="Khanum Perfume"
               fill
               className="object-cover"
             />
@@ -63,7 +63,7 @@ export default function AboutPage() {
           <div className="p-6 rounded-xl border bg-white shadow-sm hover:shadow-md transition">
             <h3 className="text-xl font-semibold mb-3">Our Story</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Born from a passion for timeless scents, Hevina’s was created to
+              Born from a passion for timeless scents, Khanum was created to
               redefine elegance. Each fragrance is a journey, blending modern
               craft with classic luxury.
             </p>
