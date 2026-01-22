@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const [togglePass, setTogglePass] = useState(false);
   const adminLogin = async () => {
     try {
-      const res = await fetch("api/admin/log-in", {
+      const res = await fetch("/api/admin/log-in", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", //  Zaroori

@@ -13,6 +13,7 @@ type AdminCred = {
 export async function POST(request:NextRequest) {
     try{
         let {email, password}: AdminCred|any  = await request.json()
+        // console.log(email, password)
         email = z.email({pattern: /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i}).parse(email)
         password = z.string().min(6).parse(password)
 
@@ -53,6 +54,7 @@ export async function POST(request:NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     })
+    // console.log("token", token)
     
     return NextResponse.json({ success: true });
   } catch (error) {
